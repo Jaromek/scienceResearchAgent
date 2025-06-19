@@ -12,3 +12,5 @@ opcjonalnie używa LangGraph do iteracyjnej analizy (np. osobny agent streszcza,
 
 Stack: LangChain, Chroma/FAISS, Arxiv API + scihub API, OpenRouter, LangGraph, Streamlit, n8n (opcjonalnie jako front/send)
 Zastosowanie: codzienna praca badawcza / przegląd literatury naukowej
+
+Sci-hub API: https://github.com/zaytoun/scihub.py
