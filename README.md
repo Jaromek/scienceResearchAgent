@@ -10,5 +10,5 @@ generuje zrozumiałe podsumowanie, cytując źródła
 
 opcjonalnie używa LangGraph do iteracyjnej analizy (np. osobny agent streszcza, inny sprawdza kontrargumenty)
 
-Stack: LangChain, Chroma/FAISS, Arxiv API, OpenRouter, LangGraph, Streamlit, n8n (opcjonalnie jako front/send)
+Stack: LangChain, Chroma/FAISS, Arxiv API + scihub API, OpenRouter, LangGraph, Streamlit, n8n (opcjonalnie jako front/send)
 Zastosowanie: codzienna praca badawcza / przegląd literatury naukowej
