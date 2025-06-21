@@ -14,3 +14,5 @@ Stack: LangChain, Chroma/FAISS, Arxiv API + scihub API, OpenRouter, LangGraph, S
 Zastosowanie: codzienna praca badawcza / przegląd literatury naukowej
 
 Sci-hub API: https://github.com/zaytoun/scihub.py
+
+arXiv API: https://info.arxiv.org/help/api/index.html
