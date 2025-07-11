@@ -68,6 +68,46 @@ class ArticleEmbedding:
         """Search for similar documents"""
         return self.vectorstore.similarity_search(query, k=k)
     
+    def analyze_query(self, query: str) -> dict:
+        """Analyze query and suggest optimal parameters"""
+        words = query.split()
+        query_length = len(words)
+        
+        if query_length <= 3:
+            return {
+                "type": "short",
+                "suggested_k": 6,
+                "suggested_chunk_size": 100,
+                "recommendation": "Consider expanding your query for better results"
+            }
+        elif query_length <= 15:
+            return {
+                "type": "optimal", 
+                "suggested_k": 4,
+                "suggested_chunk_size": 150,
+                "recommendation": "Query length is optimal"
+            }
+        else:
+            return {
+                "type": "long",
+                "suggested_k": 8,
+                "suggested_chunk_size": 200,
+                "recommendation": "Consider breaking into multiple specific queries"
+            }
+    
+    def smart_similarity_search(self, query: str, k: int = None) -> List[Document]:
+        """Smart search that adapts to query length"""
+        analysis = self.analyze_query(query)
+        
+        # Use suggested k if not provided
+        if k is None:
+            k = analysis["suggested_k"]
+            
+        print(f"Query type: {analysis['type']}")
+        print(f"Recommendation: {analysis['recommendation']}")
+        
+        return self.vectorstore.similarity_search(query, k=k)
+
 if __name__ == "__main__":
     # Example usage
     article_embedding = ArticleEmbedding()
@@ -98,7 +138,19 @@ if __name__ == "__main__":
     # Add documents to the vectorstore
     article_embedding.add_documents(chunks)
     
-    # Perform a similarity search
-    results = article_embedding.similarity_search("sample scientific article", k=2)
+    # Test different query types
+    print("=== Testing Smart Search ===")
     
-    print(results)  # Output the results of the similarity search
+    # Short query
+    print("\n1. Short query:")
+    results = article_embedding.smart_similarity_search("black holes")
+    
+    # Optimal query
+    print("\n2. Optimal query:")
+    results = article_embedding.smart_similarity_search("How do black holes form?")
+    
+    # Long query
+    print("\n3. Long query:")
+    results = article_embedding.smart_similarity_search("What are the different mechanisms by which black holes can form and what are their observable characteristics?")
+
+    print(f"\nFound {len(results)}")
