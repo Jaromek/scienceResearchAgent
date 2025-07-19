@@ -14,7 +14,8 @@ class EmbeddingArticle:
                  port: int = 6333,
                  collection_name: str = "scientific_papers",
                  chunk_size: int = 250,
-                 chunk_overlap: int = 70):
+                 chunk_overlap: int = 70,
+                 articles: List[str] = []):
         
         # Initialize embeddings
         self.embeddings = HuggingFaceEmbeddings(
@@ -42,6 +43,8 @@ class EmbeddingArticle:
             embeddings=self.embeddings
         )
     
+        self.articles = articles
+    
     def _create_collection_if_not_exists(self):
         """Create Qdrant collection if it doesn't exist"""
         try:
@@ -54,59 +57,57 @@ class EmbeddingArticle:
                 vectors_config=VectorParams(size=vector_size, distance=Distance.COSINE)
             )
     
-    def split_text(self, text: str) -> List[str]:
+    def _split_text(self, text: str) -> List[str]:
         """Split text into chunks"""
         return self.text_splitter.split_text(text)
     
-    def add_documents(self, documents: List[str]) -> List[str]:
+    def _add_documents(self, documents: List[str]) -> List[str]:
         """Add documents to the vectorstore"""
         # Convert strings to Document objects
         doc_objects = [Document(page_content=doc) for doc in documents]
         return self.vectorstore.add_documents(doc_objects)
     
-    def similarity_search(self, query: str, k: int = 4) -> List[Document]:
-        """Search for similar documents"""
-        return self.vectorstore.similarity_search(query, k=k)
-    
-    def analyze_query(self, query: str) -> dict:
-        """Analyze query and suggest optimal parameters"""
-        words = query.split()
-        query_length = len(words)
-        
-        if query_length <= 3:
-            return {
-                "type": "short",
-                "suggested_k": 6,
-                "suggested_chunk_size": 100,
-                "recommendation": "Consider expanding your query for better results"
-            }
-        elif query_length <= 15:
-            return {
-                "type": "optimal", 
-                "suggested_k": 4,
-                "suggested_chunk_size": 150,
-                "recommendation": "Query length is optimal"
-            }
-        else:
-            return {
-                "type": "long",
-                "suggested_k": 8,
-                "suggested_chunk_size": 200,
-                "recommendation": "Consider breaking into multiple specific queries"
-            }
-    
-    def smart_similarity_search(self, query: str, k: Optional[int] = None) -> List[Document]:
-        """Smart search that adapts to query length"""
-        analysis = self.analyze_query(query)
-        
-        # Use suggested k if not provided and ensure k is int
-        if not isinstance(k, int) or k is None:
-            k = int(analysis["suggested_k"])
+    def embed_articles(self) -> None:
+        """Embed articles and add them to the vectorstore"""
+        if not self.articles:
+            print("No articles provided to embed.")
+            return
             
-        print(f"Query type: {analysis['type']}")
-        print(f"Recommendation: {analysis['recommendation']}")
+        print(f"Starting to embed {len(self.articles)} articles...")
         
-        return self.vectorstore.similarity_search(query, k=k)
+        for i, article in enumerate(self.articles, 1):
+            print(f"Processing article {i}/{len(self.articles)}...")
+            
+            try:
+                chunks = self._split_text(article)
+                print(f"  - Created {len(chunks)} chunks")
+                
+                if chunks:  # Only add if chunks exist
+                    result = self._add_documents(chunks)
+                    print(f"  - Added {len(chunks)} chunks to vectorstore")
+                else:
+                    print(f"  - Warning: No chunks created for article {i}")
+                    
+            except Exception as e:
+                print(f"  - Error processing article {i}: {e}")
+                continue
+        
+        print("Finished embedding all articles!")
+    
+    def add_article(self, article: str) -> None:
+        """Add a single article and embed it immediately"""
+        if not article.strip():
+            print("Empty article provided.")
+            return
+            
+        print("Adding and embedding new article...")
+        chunks = self._split_text(article)
+        
+        if chunks:
+            self._add_documents(chunks)
+            print(f"Added {len(chunks)} chunks to vectorstore")
+        else:
+            print("No chunks created from article")
 
 if __name__ == "__main__":
     # Example usage
@@ -133,24 +134,8 @@ if __name__ == "__main__":
     """    
     
     # Split the text into chunks
-    chunks = article_embedding.split_text(sample_text)
+    chunks = article_embedding._split_text(sample_text)
     
     # Add documents to the vectorstore
-    article_embedding.add_documents(chunks)
+    article_embedding._add_documents(chunks)
     
-    # Test different query types
-    print("=== Testing Smart Search ===")
-    
-    # Short query
-    print("\n1. Short query:")
-    results = article_embedding.smart_similarity_search("black holes")
-    
-    # Optimal query
-    print("\n2. Optimal query:")
-    results = article_embedding.smart_similarity_search("How do black holes form?")
-    
-    # Long query
-    print("\n3. Long query:")
-    results = article_embedding.smart_similarity_search("What are the different mechanisms by which black holes can form and what are their observable characteristics?")
-
-    print(f"\nFound {len(results)}")
