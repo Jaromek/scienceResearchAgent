@@ -1,7 +1,7 @@
 import arxiv
 
 class ArxivAPI:
-    def __init__(self, keyword_list: list[str], max_results: int = 10, download_directory: str = './archive'):
+    def __init__(self, keyword_list: tuple[str, ...], max_results: int = 10, download_directory: str = './archive'):
         self.keyword_list = keyword_list
         self.max_results = max_results
         self.download_directory = download_directory
@@ -41,6 +41,6 @@ class ArxivAPI:
     
 if __name__ == "__main__":
     # Example usage
-    keywords = ["black holes", "space exploration", "artificial intelligence"]
-    arxiv_api = ArxivAPI(keyword_list=keywords, max_results=1)
+    keywords = ("black holes", "space exploration", "artificial intelligence")
+    arxiv_api = ArxivAPI(keyword_list=keywords, max_results=10, download_directory='./archive')
     papers = arxiv_api.search()

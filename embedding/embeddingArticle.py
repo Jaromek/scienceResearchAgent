@@ -13,8 +13,8 @@ class EmbeddingArticle:
                  host: str = "localhost", 
                  port: int = 6333,
                  collection_name: str = "scientific_papers",
-                 chunk_size: int = 150,
-                 chunk_overlap: int = 50):
+                 chunk_size: int = 250,
+                 chunk_overlap: int = 70):
         
         # Initialize embeddings
         self.embeddings = HuggingFaceEmbeddings(
