@@ -5,7 +5,7 @@ from pdfToText.pdfToText import PDFToText
 
 
 class DatabasePreparation:
-    def __init__(self, user_query: str = "", max_results: int = 10, download_directory: str = './archive'):
+    def __init__(self, user_query: str = "", max_results: int = 10, download_directory: str = 'archive'):
         self.user_query = user_query
         self.max_results = max_results
         self.download_directory = download_directory
@@ -26,3 +26,15 @@ class DatabasePreparation:
         # Step 4: Embed articles and add them to the vectorstore
         embedding_article = EmbeddingArticle(articles=texts)
         embedding_article.embed_articles()
+
+if __name__ == "__main__":
+    query = 'jakie sa metody badawcze w astrofizyce'
+
+    db_preparation = DatabasePreparation(user_query=query, max_results=10, download_directory='archive')
+    try:
+        db_preparation.prepare_database()
+        print("Database preparation completed successfully.")
+    except Exception as e:
+        print(f"An error occurred during database preparation: {e}")
+        print(f"Error: {e}")
+    
