@@ -1,7 +1,7 @@
 import arxiv
 
 class ArxivAPI:
-    def __init__(self, keyword_list: list[str], max_results: int = 10, download_directory: str = './arxiv_pdfs'):
+    def __init__(self, keyword_list: list[str], max_results: int = 10, download_directory: str = './archive'):
         self.keyword_list = keyword_list
         self.max_results = max_results
         self.download_directory = download_directory
@@ -38,3 +38,9 @@ class ArxivAPI:
             result.download_pdf(dirpath=self.download_directory, filename=f"{result.entry_id.split('/')[-1]}.pdf")
         
         return results
+    
+if __name__ == "__main__":
+    # Example usage
+    keywords = ["black holes", "space exploration", "artificial intelligence"]
+    arxiv_api = ArxivAPI(keyword_list=keywords, max_results=1)
+    papers = arxiv_api.search()
