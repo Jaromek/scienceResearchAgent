@@ -4,9 +4,9 @@ from langchain_community.vectorstores import Qdrant
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams
 from langchain.schema import Document
-from typing import List, Any
+from typing import List, Optional
 
-class ArticleEmbedding:
+class EmbeddingArticle:
     def __init__(self,
                  model_name: str = "allenai/scibert_scivocab_uncased",
                  device: str = 'cuda',
@@ -95,13 +95,13 @@ class ArticleEmbedding:
                 "recommendation": "Consider breaking into multiple specific queries"
             }
     
-    def smart_similarity_search(self, query: str, k: int = None) -> List[Document]:
+    def smart_similarity_search(self, query: str, k: Optional[int] = None) -> List[Document]:
         """Smart search that adapts to query length"""
         analysis = self.analyze_query(query)
         
-        # Use suggested k if not provided
-        if k is None:
-            k = analysis["suggested_k"]
+        # Use suggested k if not provided and ensure k is int
+        if not isinstance(k, int) or k is None:
+            k = int(analysis["suggested_k"])
             
         print(f"Query type: {analysis['type']}")
         print(f"Recommendation: {analysis['recommendation']}")
@@ -110,7 +110,7 @@ class ArticleEmbedding:
 
 if __name__ == "__main__":
     # Example usage
-    article_embedding = ArticleEmbedding()
+    article_embedding = EmbeddingArticle()
     
     # Sample text to embed
     sample_text = """

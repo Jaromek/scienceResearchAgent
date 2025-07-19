@@ -1,9 +1,10 @@
 import arxiv
 
 class ArxivAPI:
-    def __init__(self, keyword_list: list[str], max_results: int = 10):
+    def __init__(self, keyword_list: list[str], max_results: int = 10, download_directory: str = './arxiv_pdfs'):
         self.keyword_list = keyword_list
         self.max_results = max_results
+        self.download_directory = download_directory
 
     def search(self) -> list[str]:
         """
@@ -34,5 +35,6 @@ class ArxivAPI:
                 'published': result.published,
                 'arxiv_id': result.entry_id
             })
+            result.download_pdf(dirpath=self.download_directory, filename=f"{result.entry_id.split('/')[-1]}.pdf")
         
         return results
