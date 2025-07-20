@@ -1,0 +1,23 @@
+# Core RAG and LLM frameworks
+langchain>=0.1.0
+langchain-community>=0.0.13
+
+# Vector database
+qdrant-client>=1.7.0
+
+# Embeddings and transformers
+sentence-transformers>=2.2.2
+transformers>=4.35.0
+
+# PDF processing
+pdfminer.six>=20231228
+
+# Scientific paper retrieval
+arxiv>=2.1.0
+
+# HTTP requests for API calls
+requests>=2.31.0
+
+# Keyword extraction and NLP
+keybert>=0.8.0
+deep-translator>=1.11.4
