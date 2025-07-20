@@ -54,7 +54,7 @@ cd researchAgent
 pip install -r requirements.txt
 
 # Download LLM model
-ollama pull llama3.1
+ollama pull (any model you would like to use)
 ```
 
 ### Usage
