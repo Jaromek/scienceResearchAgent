@@ -109,6 +109,14 @@ class EmbeddingArticle:
         else:
             print("No chunks created from article")
 
+    def delete_collection(self) -> None:
+        """Delete the Qdrant collection"""
+        try:
+            self.client.delete_collection(self.collection_name)
+            print(f"Collection '{self.collection_name}' deleted successfully.")
+        except Exception as e:
+            print(f"Error deleting collection: {e}")
+            
 if __name__ == "__main__":
     # Example usage
     article_embedding = EmbeddingArticle()
