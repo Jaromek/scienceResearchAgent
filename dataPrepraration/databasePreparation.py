@@ -14,21 +14,31 @@ class DatabasePreparation:
         # Step 1: Extract keywords from the provided text
         extractor = KeywordsExtractor(self.user_query)
         keyword_list = extractor.get_keywords()
+        print(f"Extracted keywords: {keyword_list}")
 
         # Step 2: Search and download papers from arXiv
         arxiv_api = ArxivAPI(keyword_list=keyword_list, max_results=self.max_results, download_directory=self.download_directory)
         papers = arxiv_api.search()
+        print(f"Successfully downloaded {len(papers)} papers")
+
+        if not papers:
+            print("No papers were downloaded. Cannot proceed with text extraction.")
+            return
 
         # Step 3: Convert downloaded PDFs to text
         pdf_to_text = PDFToText(pdf_path=self.download_directory)
         texts = pdf_to_text.convert_to_text()
+        
+        if not texts:
+            print("No texts were extracted from PDFs.")
+            return
 
         # Step 4: Embed articles and add them to the vectorstore
         embedding_article = EmbeddingArticle(articles=texts)
         embedding_article.embed_articles()
 
 if __name__ == "__main__":
-    query = 'jakie sa metody badawcze w astrofizyce'
+    query = 'jakie metody uczenia maszynowego są stosowane w badaniach nad czarnymi dziurami i dlaczego?'
 
     db_preparation = DatabasePreparation(user_query=query, max_results=10, download_directory='archive')
     try:

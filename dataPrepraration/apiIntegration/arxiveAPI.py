@@ -25,6 +25,9 @@ class ArxivAPI:
         Returns:
             list: A list of dictionaries containing paper information.
         """
+        # Create download directory first
+        self._create_download_directory()
+        
         # Połącz słowa kluczowe w jeden query string
         query_string = " OR ".join(self.keyword_list)
         
@@ -36,14 +39,21 @@ class ArxivAPI:
         
         results = []
         for result in search.results():
-            results.append({
-                'title': result.title,
-                'summary': result.summary,
-                'authors': [author.name for author in result.authors],
-                'published': result.published,
-                'arxiv_id': result.entry_id
-            })
-            result.download_pdf(dirpath=self.download_directory, filename=f"{result.entry_id.split('/')[-1]}.pdf")
+            try:
+                # Download PDF first, then add to results only if successful
+                result.download_pdf(dirpath=self.download_directory, filename=f"{result.entry_id.split('/')[-1]}.pdf")
+                
+                results.append({
+                    'title': result.title,
+                    'summary': result.summary,
+                    'authors': [author.name for author in result.authors],
+                    'published': result.published,
+                    'arxiv_id': result.entry_id
+                })
+                
+            except Exception as e:
+                print(f"Failed to download {result.entry_id}: {e}")
+                continue
         
         return results
     
