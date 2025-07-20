@@ -37,7 +37,7 @@ class KeywordsExtractor:
         """
         keywords = self.model.extract_keywords(
             self.translated_text, 
-            keyphrase_ngram_range=(1, 1), 
+            keyphrase_ngram_range=(1, 3),  # Single words and up to three-word phrases
             stop_words='english', 
             top_n=num_keywords
         )
