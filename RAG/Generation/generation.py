@@ -4,7 +4,7 @@ import requests
 
 class Generation:
     def __init__(self, 
-                 model_name: str = "llama3:8b", 
+                 model_name: str = "deepseek-r1:70b", 
                  ollama_url: str = "http://localhost:11434",
                  collection_name: str = "scientific_papers",
                  k: int = 10,
@@ -41,7 +41,7 @@ class Generation:
                         "num_predict": self.max_tokens
                     }
                 },
-                timeout=60
+                timeout=600
             )
             
             if response.status_code == 200:

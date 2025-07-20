@@ -37,7 +37,7 @@ def prepare_database_if_needed(query: str):
     """
     Prepare database with relevant articles based on user query
     """
-    print("🔍 Przygotowuję bazę danych na podstawie Twojego pytania...")
+    print("Przygotowuję bazę danych na podstawie Twojego pytania...")
     
     try:
         db_preparation = DatabasePreparation(
