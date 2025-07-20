@@ -8,7 +8,7 @@ from typing import List, Optional
 
 class EmbeddingArticle:
     def __init__(self,
-                 model_name: str = "allenai/scibert_scivocab_uncased",
+                 model_name: str = "all-MiniLM-L6-v2",
                  device: str = 'cuda',
                  host: str = "localhost", 
                  port: int = 6333,
@@ -44,6 +44,10 @@ class EmbeddingArticle:
         )
     
         self.articles = articles
+
+    def embedding(self) -> HuggingFaceEmbeddings:
+        """Return the embeddings model"""
+        return self.embeddings
     
     def _create_collection_if_not_exists(self):
         """Create Qdrant collection if it doesn't exist"""
@@ -51,7 +55,7 @@ class EmbeddingArticle:
             # Check if collection exists
             self.client.get_collection(self.collection_name)
         except Exception:
-            vector_size = 768
+            vector_size = 384
             self.client.create_collection(
                 collection_name=self.collection_name,
                 vectors_config=VectorParams(size=vector_size, distance=Distance.COSINE)
@@ -61,10 +65,10 @@ class EmbeddingArticle:
         """Split text into chunks"""
         return self.text_splitter.split_text(text)
     
-    def _add_documents(self, documents: List[str]) -> List[str]:
+    def _add_documents(self, documents: List[str], article_name: str) -> List[str]:
         """Add documents to the vectorstore"""
         # Convert strings to Document objects
-        doc_objects = [Document(page_content=doc) for doc in documents]
+        doc_objects = [Document(page_content=doc, metadata={'article_name': article_name}) for doc in documents]
         return self.vectorstore.add_documents(doc_objects)
     
     def embed_articles(self) -> None:
@@ -83,7 +87,7 @@ class EmbeddingArticle:
                 print(f"  - Created {len(chunks)} chunks")
                 
                 if chunks:  # Only add if chunks exist
-                    result = self._add_documents(chunks)
+                    result = self._add_documents(documents=chunks, article_name=article)
                     print(f"  - Added {len(chunks)} chunks to vectorstore")
                 else:
                     print(f"  - Warning: No chunks created for article {i}")
@@ -104,7 +108,7 @@ class EmbeddingArticle:
         chunks = self._split_text(article)
         
         if chunks:
-            self._add_documents(chunks)
+            self._add_documents(chunks, article_name=article)
             print(f"Added {len(chunks)} chunks to vectorstore")
         else:
             print("No chunks created from article")
@@ -145,5 +149,5 @@ if __name__ == "__main__":
     chunks = article_embedding._split_text(sample_text)
     
     # Add documents to the vectorstore
-    article_embedding._add_documents(chunks)
+    article_embedding._add_documents(documents=chunks, article_name="Sample Article")
     

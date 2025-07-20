@@ -1,7 +1,7 @@
-from extraction.keywordsExtraction import KeywordsExtractor
-from apiIntegration.arxiveAPI import ArxivAPI
-from embedding.embeddingArticle import EmbeddingArticle
-from pdfToText.pdfToText import PDFToText
+from dataPrepraration.extraction.keywordsExtraction import KeywordsExtractor
+from dataPrepraration.apiIntegration.arxiveAPI import ArxivAPI
+from dataPrepraration.embedding.embeddingArticle import EmbeddingArticle
+from dataPrepraration.pdfToText.pdfToText import PDFToText
 
 
 class DatabasePreparation:
@@ -33,9 +33,30 @@ class DatabasePreparation:
             print("No texts were extracted from PDFs.")
             return
 
-        # Step 4: Embed articles and add them to the vectorstore
-        embedding_article = EmbeddingArticle(articles=texts)
-        embedding_article.embed_articles()
+        # Step 4: Get PDF filenames for metadata
+        pdf_paths = pdf_to_text._path_to_pdfs()
+        
+        # Create articles list with filenames as metadata
+        articles_with_names = []
+        for i, text in enumerate(texts):
+            if i < len(pdf_paths):
+                filename = pdf_paths[i].split('/')[-1].replace('.pdf', '')  # Get filename without path and extension
+                articles_with_names.append({'text': text, 'filename': filename})
+            else:
+                articles_with_names.append({'text': text, 'filename': f'Document_{i+1}'})
+        
+        # Step 5: Embed articles and add them to the vectorstore
+        texts_only = [article['text'] for article in articles_with_names]
+        embedding_article = EmbeddingArticle(articles=texts_only)
+        
+        # Override the embed_articles method to use proper filenames
+        for i, article_data in enumerate(articles_with_names):
+            chunks = embedding_article._split_text(article_data['text'])
+            if chunks:
+                embedding_article._add_documents(chunks, article_data['filename'])
+                print(f"Embedded article: {article_data['filename']} ({len(chunks)} chunks)")
+        
+        print("Database preparation completed successfully!")
 
 if __name__ == "__main__":
     query = 'jakie metody uczenia maszynowego są stosowane w badaniach nad czarnymi dziurami i dlaczego?'
