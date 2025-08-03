@@ -32,33 +32,46 @@ QUESTION: {query}
 
 ANSWER:"""
         
-        # Build context from chunks
+        # Build context from chunks and create source mapping
         context_parts = []
-        sources = set()
+        sources = list(set(chunk['source'] for chunk in retrieved_chunks))
+        source_to_number = {source: i+1 for i, source in enumerate(sources)}
         
         for i, chunk in enumerate(retrieved_chunks, 1):
-            context_parts.append(f"[Chunk {i}]: {chunk['content']}")
-            sources.add(chunk['source'])
+            source_num = source_to_number[chunk['source']]
+            context_parts.append(f"[{source_num}]: {chunk['content']}")
         
         context = "\n\n".join(context_parts)
-        sources_list = ", ".join(sources)
+        
+        # Create numbered sources list for reference
+        sources_list = "\n".join([f"[{i+1}] {source}" for i, source in enumerate(sources)])
         
         # Create the complete prompt
-        prompt = f"""You are a scientific research assistant. Answer the question ONLY based on the provided context from scientific papers. Be precise and cite the sources you use.
+        prompt = f"""You are a scientific research assistant. Answer the question ONLY based on the provided context from scientific papers. Use citations in square brackets [1], [2], etc. when referencing information from specific sources.
 
 CONTEXT FROM SCIENTIFIC PAPERS:
 {context}
-
-SOURCES: {sources_list}
 
 QUESTION: {query}
 
 INSTRUCTIONS:
 - Answer only based on the provided context
-- If the context doesn't contain sufficient information, state this clearly
-- Mention specific sources when making claims
+- Use ONLY the source numbers [1], [2], etc. for citations, never mention "Chunk" or "Source" in your answer
+- Place citations immediately after the information they support
+- You can combine multiple sources like [1][2] when information comes from multiple sources
+- Do not mention chunk numbers or source details in your response text
 - Be scientific and precise in your response
-- Provide a comprehensive answer
+- End your response with a "Sources:" section by copying exactly from the AVAILABLE SOURCES list below
+
+EXAMPLE FORMAT:
+Fraud detection systems primarily perform two main tasks: real-time detection during payment processing and posterior detection to block cards retrospectively [1]. Card payment fraud detection is fundamentally a pattern recognition problem [2].
+
+Sources:
+[1] 2204.05265v1
+[2] 2012.03754v1
+
+AVAILABLE SOURCES (copy these exactly to your Sources section):
+{sources_list}
 
 ANSWER:"""
         

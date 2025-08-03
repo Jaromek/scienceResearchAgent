@@ -24,11 +24,8 @@ def rag_answer(query: str, collection_name: str = "scientific_papers") -> str:
         
         answer = result['answer']
         
-        if result['context_used'] and result['sources']:
-            sources_info = f"\n\nSources: {', '.join(result['sources'])}"
-            return answer + sources_info
-        else:
-            return answer
+        # LLM already includes Sources section in the answer, no need to add it again
+        return answer
             
     except Exception as e:
         return f"An error occurred during response generation: {str(e)}"
