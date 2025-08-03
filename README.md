@@ -33,7 +33,7 @@ Research Agent automatically:
 - **🔍 Qdrant** - Vector database for semantic search
 - **🤖 Ollama** - Local LLM inference (llama3.1, phi3, etc.)
 - **🔬 Sentence Transformers** - Scientific text embeddings
-- **📄 PyPDF** - PDF text extraction
+- **📄 pdfminer.six** - PDF text extraction
 - **🔤 KeyBERT** - Intelligent keyword extraction
 
 ## 🚀 Quick Start
