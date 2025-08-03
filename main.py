@@ -68,7 +68,7 @@ if __name__ == "__main__":
             break
             
         if user_query.lower() == "prepare":
-            query_for_prep = input("Provide topic for database preparation: ").strip()
+            query_for_prep = input("Provide topic for database preparation for database name: ").strip()
             if query_for_prep:
                 database_prepared = prepare_database_if_needed(query_for_prep)
             continue
