@@ -20,78 +20,78 @@ def rag_answer(query: str, collection_name: str = "scientific_papers") -> str:
         result = rag_system.generate_answer(query)
         
         if result['error']:
-            return f"Błąd: {result['error']}"
+            return f"Error: {result['error']}"
         
         answer = result['answer']
         
         if result['context_used'] and result['sources']:
-            sources_info = f"\n\nŹródła: {', '.join(result['sources'])}"
+            sources_info = f"\n\nSources: {', '.join(result['sources'])}"
             return answer + sources_info
         else:
             return answer
             
     except Exception as e:
-        return f"Wystąpił błąd podczas generowania odpowiedzi: {str(e)}"
+        return f"An error occurred during response generation: {str(e)}"
 
 def prepare_database_if_needed(query: str):
     """
     Prepare database with relevant articles based on user query
     """
-    print("Przygotowuję bazę danych na podstawie Twojego pytania...")
+    print("Preparing database based on your question...")
     
     try:
         db_preparation = DatabasePreparation(
             user_query=query, 
-            max_results=5,  # Mniejsza liczba dla szybszych testów
+            max_results=5,  # Smaller number for faster tests
             download_directory='archive'
         )
         db_preparation.prepare_database()
-        print("Baza danych przygotowana pomyślnie!")
+        print("Database prepared successfully!")
         return True
         
     except Exception as e:
-        print(f"Błąd podczas przygotowania bazy: {e}")
+        print(f"Error during database preparation: {e}")
         return False
 
 if __name__ == "__main__":
-    print("RAG Research Agent - Asystent Naukowy")
-    print("Zadaj pytanie, a pobiorę odpowiednie artykuły i odpowiem na podstawie najnowszych badań.")
-    print("Wpisz 'exit' aby zakończyć, 'prepare' aby przygotować bazę na nowo.\n")
+    print("RAG Research Agent - Scientific Assistant")
+    print("Ask a question, and I'll retrieve relevant articles and answer based on the latest research.")
+    print("Type 'exit' to quit, 'prepare' to prepare a new database.\n")
     
     database_prepared = False
     
     while True:
-        user_query = input("Zadaj pytanie: ").strip()
+        user_query = input("Ask a question: ").strip()
         
         if user_query.lower() == "exit":
-            print("Do widzenia!")
+            print("Goodbye!")
             break
             
         if user_query.lower() == "prepare":
-            query_for_prep = input("Podaj temat do przygotowania bazy danych: ").strip()
+            query_for_prep = input("Provide topic for database preparation: ").strip()
             if query_for_prep:
                 database_prepared = prepare_database_if_needed(query_for_prep)
             continue
             
         if not user_query:
-            print("Proszę podaj pytanie.")
+            print("Please provide a question.")
             continue
         
-        # Przygotuj bazę danych jeśli jeszcze nie została przygotowana
+        # Prepare database if not already prepared
         if not database_prepared:
-            print("Pierwszego użycie - przygotowuję bazę danych...")
+            print("First use - preparing database...")
             database_prepared = prepare_database_if_needed(user_query)
             if not database_prepared:
-                print("Nie mogę kontynuować bez przygotowanej bazy danych.")
+                print("Cannot continue without prepared database.")
                 continue
         
-        print("Analizuję pytanie i wyszukuję odpowiedź...")
+        print("Analyzing question and searching for answer...")
         
         try:
             answer = rag_answer(user_query)
-            print(f"\nOdpowiedź:\n{answer}\n")
+            print(f"\nAnswer:\n{answer}\n")
             print("-" * 80)
             
         except Exception as e:
-            print(f"Błąd podczas generowania odpowiedzi: {e}")
-            print("Spróbuj ponownie lub wpisz 'prepare' aby przygotować bazę na nowo.\n")
+            print(f"Error during response generation: {e}")
+            print("Try again or type 'prepare' to prepare the database anew.\n")

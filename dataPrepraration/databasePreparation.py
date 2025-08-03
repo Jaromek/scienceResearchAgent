@@ -59,7 +59,7 @@ class DatabasePreparation:
         print("Database preparation completed successfully!")
 
 if __name__ == "__main__":
-    query = 'jakie metody uczenia maszynowego są stosowane w badaniach nad czarnymi dziurami i dlaczego?'
+    query = 'what machine learning methods are used in black hole research and why?'
 
     db_preparation = DatabasePreparation(user_query=query, max_results=10, download_directory='archive')
     try:

@@ -26,41 +26,41 @@ class Augmented:
         retrieved_chunks = self.retrieval.retrieve(query)
         
         if not retrieved_chunks:
-            return f"""Jesteś asystentem naukowym. Odpowiedz na następujące pytanie na podstawie swojej wiedzy, ale zaznacz że nie masz konkretnych dokumentów w bazie danych na ten temat.
+            return f"""You are a scientific research assistant. Answer the following question based on your general knowledge, but mention that you don't have specific documents in your database about this topic.
 
-PYTANIE: {query}
+QUESTION: {query}
 
-ODPOWIEDŹ:"""
+ANSWER:"""
         
         # Build context from chunks
         context_parts = []
         sources = set()
         
         for i, chunk in enumerate(retrieved_chunks, 1):
-            context_parts.append(f"[Fragment {i}]: {chunk['content']}")
+            context_parts.append(f"[Chunk {i}]: {chunk['content']}")
             sources.add(chunk['source'])
         
         context = "\n\n".join(context_parts)
         sources_list = ", ".join(sources)
         
         # Create the complete prompt
-        prompt = f"""Jesteś asystentem naukowym. Odpowiedz na pytanie WYŁĄCZNIE na podstawie dostarczonego kontekstu z artykułów naukowych. Bądź precyzyjny i cytuj źródła których używasz.
+        prompt = f"""You are a scientific research assistant. Answer the question ONLY based on the provided context from scientific papers. Be precise and cite the sources you use.
 
-KONTEKST Z ARTYKUŁÓW NAUKOWYCH:
+CONTEXT FROM SCIENTIFIC PAPERS:
 {context}
 
-ŹRÓDŁA: {sources_list}
+SOURCES: {sources_list}
 
-PYTANIE: {query}
+QUESTION: {query}
 
-INSTRUKCJE:
-- Odpowiadaj tylko na podstawie dostarczonego kontekstu
-- Jeśli kontekst nie zawiera wystarczających informacji, powiedz to jasno
-- Wspominaj konkretne źródła przy przedstawianiu twierdzeń
-- Bądź naukowy i precyzyjny w odpowiedzi
-- Odpowiadaj po polsku
+INSTRUCTIONS:
+- Answer only based on the provided context
+- If the context doesn't contain sufficient information, state this clearly
+- Mention specific sources when making claims
+- Be scientific and precise in your response
+- Provide a comprehensive answer
 
-ODPOWIEDŹ:"""
+ANSWER:"""
         
         return prompt
     

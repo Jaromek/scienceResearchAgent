@@ -22,15 +22,15 @@ def rag_answer(query: str, collection_name: str = "scientific_papers") -> str:
         result = rag_system.generate_answer(query)
         
         if result['error']:
-            return f"Błąd: {result['error']}"
+            return f"Error: {result['error']}"
         
         answer = result['answer']
         
         if result['context_used'] and result['sources']:
-            sources_info = f"\n\n📚 Źródła: {', '.join(result['sources'])}"
+            sources_info = f"\n\n Sources: {', '.join(result['sources'])}"
             return answer + sources_info
         else:
             return answer
             
     except Exception as e:
-        return f"Wystąpił błąd podczas generowania odpowiedzi: {str(e)}"
+        return f"Error occured during generating answer: {str(e)}"

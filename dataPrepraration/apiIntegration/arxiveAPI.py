@@ -28,7 +28,7 @@ class ArxivAPI:
         # Create download directory first
         self._create_download_directory()
         
-        # Połącz słowa kluczowe w jeden query string
+        # Combine keywords into one query string
         query_string = " OR ".join(self.keyword_list)
         
         search = arxiv.Search(

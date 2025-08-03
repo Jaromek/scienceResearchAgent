@@ -64,7 +64,7 @@ class Generation:
         """
         if not query.strip():
             return {
-                "answer": "Proszę podaj poprawne pytanie.",
+                "answer": "Please provide a valid question.",
                 "sources": [],
                 "context_used": False,
                 "error": None
@@ -81,14 +81,14 @@ class Generation:
         
         if "error" in llm_response:
             return {
-                "answer": f"Błąd: {llm_response['error']}",
+                "answer": f"Error: {llm_response['error']}",
                 "sources": context_info.get('sources', []),
                 "context_used": context_info['has_context'],
                 "error": llm_response['error']
             }
         
         return {
-            "answer": llm_response.get("response", "Nie wygenerowano odpowiedzi"),
+            "answer": llm_response.get("response", "No response generated"),
             "sources": context_info.get('sources', []),
             "context_used": context_info['has_context'],
             "num_chunks_used": context_info.get('num_chunks', 0),
