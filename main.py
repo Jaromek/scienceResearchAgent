@@ -39,7 +39,7 @@ def prepare_database_if_needed(query: str):
     try:
         db_preparation = DatabasePreparation(
             user_query=query, 
-            max_results=5,  # Smaller number for faster tests
+            max_results=20,  # Smaller number for faster tests
             download_directory='archive'
         )
         db_preparation.prepare_database()

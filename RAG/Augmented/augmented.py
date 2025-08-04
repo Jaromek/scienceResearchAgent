@@ -61,17 +61,20 @@ INSTRUCTIONS:
 - You can combine multiple sources like [1][2] when information comes from multiple sources
 - Do not mention chunk numbers or source details in your response text
 - Be scientific and precise in your response
-- End your response with a "Sources:" section by copying exactly from the AVAILABLE SOURCES list below
+- End your response with "Sources:" section
+- CRITICAL: List sources sequentially ([1], [2], [3]...) and include the identifier after each number
 
-EXAMPLE FORMAT:
-Fraud detection systems primarily perform two main tasks: real-time detection during payment processing and posterior detection to block cards retrospectively [1]. Card payment fraud detection is fundamentally a pattern recognition problem [2].
+EXACT FORMAT REQUIRED:
+Your answer text with citations [1] and [3].
 
 Sources:
-[1] 2204.05265v1
-[2] 2012.03754v1
+[1] first_article_identifier
+[2] third_article_identifier
 
-AVAILABLE SOURCES (copy these exactly to your Sources section):
+AVAILABLE SOURCES:
 {sources_list}
+
+REMEMBER: If you cite [1] and [3], your Sources should show [1] and [2] (sequential numbering).
 
 ANSWER:"""
         
