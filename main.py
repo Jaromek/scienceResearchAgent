@@ -39,7 +39,7 @@ def prepare_database_if_needed(query: str):
     try:
         db_preparation = DatabasePreparation(
             user_query=query, 
-            max_results=20,  # Smaller number for faster tests
+            max_results=100,  # Smaller number for faster tests
             download_directory='archive'
         )
         db_preparation.prepare_database()
@@ -85,6 +85,7 @@ if __name__ == "__main__":
         print("Analyzing question and searching for answer...")
         
         try:
+            print("Question:\n", user_query)
             answer = rag_answer(user_query)
             print(f"\nAnswer:\n{answer}\n")
             print("-" * 80)

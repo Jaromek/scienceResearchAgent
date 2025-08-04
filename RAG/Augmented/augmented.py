@@ -37,7 +37,8 @@ ANSWER:"""
         sources = list(set(chunk['source'] for chunk in retrieved_chunks))
         source_to_number = {source: i+1 for i, source in enumerate(sources)}
         
-        for i, chunk in enumerate(retrieved_chunks, 1):
+        # Group chunks by source to ensure consistent numbering
+        for chunk in retrieved_chunks:
             source_num = source_to_number[chunk['source']]
             context_parts.append(f"[{source_num}]: {chunk['content']}")
         
@@ -56,25 +57,20 @@ QUESTION: {query}
 
 INSTRUCTIONS:
 - Answer only based on the provided context
-- Use ONLY the source numbers [1], [2], etc. for citations, never mention "Chunk" or "Source" in your answer
+- Use ONLY the source numbers [1], [2], etc. for citations
+- IMPORTANT: If the same source appears multiple times in context, always use the SAME number
 - Place citations immediately after the information they support
-- You can combine multiple sources like [1][2] when information comes from multiple sources
-- Do not mention chunk numbers or source details in your response text
-- Be scientific and precise in your response
-- End your response with "Sources:" section
-- CRITICAL: List sources sequentially ([1], [2], [3]...) and include the identifier after each number
+- End your response with "Sources:" section with BOTH number AND identifier
+- CRITICAL: Renumber sources sequentially starting from [1] regardless of original numbers
+- Each unique article gets ONE number, reuse that number for all citations from that article
 
-EXACT FORMAT REQUIRED:
-Your answer text with citations [1] and [3].
-
+REQUIRED FORMAT:
 Sources:
-[1] first_article_identifier
-[2] third_article_identifier
+[1] identifier_of_first_cited_source
+[2] identifier_of_second_cited_source
 
-AVAILABLE SOURCES:
+AVAILABLE SOURCES (renumber sequentially, same article = same number):
 {sources_list}
-
-REMEMBER: If you cite [1] and [3], your Sources should show [1] and [2] (sequential numbering).
 
 ANSWER:"""
         
