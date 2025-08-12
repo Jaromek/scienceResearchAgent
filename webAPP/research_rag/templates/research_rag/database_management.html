@@ -1,0 +1,312 @@
+{% extends 'research_rag/base.html' %}
+{% load static %}
+
+{% block title %}Database Management - RAG Research Assistant{% endblock %}
+
+{% block page_icon %}<i class="fas fa-database"></i>{% endblock %}
+{% block page_title %}Database Management{% endblock %}
+{% block page_subtitle %}Prepare database of scientific articles for specific topics{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Database preparation form -->
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-plus-circle me-2"></i>
+                    Prepare New Database
+                </h5>
+            </div>
+            <div class="card-body">
+                <form id="database-form" method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-4">
+                        {{ form.search_topic.label_tag }}
+                        {{ form.search_topic }}
+                        {% if form.search_topic.help_text %}
+                        <div class="form-text">{{ form.search_topic.help_text }}</div>
+                        {% endif %}
+                        {% if form.search_topic.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.search_topic.errors %}{{ error }}{% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-4">
+                        {{ form.custom_max_papers.label_tag }}
+                        {{ form.custom_max_papers }}
+                        {% if form.custom_max_papers.help_text %}
+                        <div class="form-text">{{ form.custom_max_papers.help_text }}</div>
+                        {% endif %}
+                        {% if form.custom_max_papers.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.custom_max_papers.errors %}{{ error }}{% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-info-circle fs-4"></i>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6>Process Information:</h6>
+                                <ul class="mb-0 small">
+                                    <li>Process may take several minutes depending on number of papers</li>
+                                    <li>Papers will be downloaded from arXiv database</li>
+                                    <li>Texts will be processed and indexed in vector database</li>
+                                    <li>You can track progress in "Process Logs" section below</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-download me-2"></i>
+                            Start Database Preparation
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Side panel with information -->
+    <div class="col-lg-4">
+        <!-- Statistics -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="fas fa-chart-bar me-2"></i>
+                    Statistics
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="text-center mb-2">
+                            <div class="fs-4 fw-bold text-purple">{{ logs|length }}</div>
+                            <small class="text-light-gray">Total Processes</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-center mb-2">
+                            <div class="fs-4 fw-bold text-purple">
+                                {{ logs|length|add:"-1"|default:"0" }}
+                            </div>
+                            <small class="text-light-gray">Completed</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Latest process -->
+                {% if logs %}
+                {% with latest_log=logs.0 %}
+                <div class="mt-3 pt-3 border-top border-dark">
+                    <h6 class="text-light-gray">Latest Process:</h6>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong class="text-white">{{ latest_log.search_query|truncatechars:20 }}</strong>
+                            <br>
+                            <small class="text-light-gray">{{ latest_log.started_at|timesince }} ago</small>
+                        </div>
+                        <span class="badge 
+                            {% if latest_log.status == 'completed' %}bg-success
+                            {% elif latest_log.status == 'error' %}bg-danger
+                            {% else %}bg-warning{% endif %}">
+                            {{ latest_log.get_status_display }}
+                        </span>
+                    </div>
+                </div>
+                {% endwith %}
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Tips -->
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="fas fa-lightbulb me-2"></i>
+                    Tips
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="small">
+                    <div class="mb-3">
+                        <strong class="text-white">Good search topics:</strong>
+                        <ul class="mt-1 mb-0 text-light-gray">
+                            <li>quantum computing</li>
+                            <li>machine learning medical</li>
+                            <li>climate change renewable</li>
+                            <li>CRISPR gene editing</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <strong class="text-white">Optimal number of papers:</strong>
+                        <ul class="mt-1 mb-0 text-light-gray">
+                            <li>50-100 for testing</li>
+                            <li>200-500 for production</li>
+                            <li>More = better results, but longer time</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="text-light-gray">
+                        <strong class="text-white">Use English keywords</strong> 
+                        - arXiv is an international scientific publication database.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Process logs -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-list-alt me-2"></i>
+                    Database Preparation Process Logs
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if logs %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Search Topic</th>
+                                <th>Status</th>
+                                <th>Papers</th>
+                                <th>Configuration</th>
+                                <th>Started</th>
+                                <th>Duration</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for log in logs %}
+                            <tr>
+                                <td>
+                                    <strong class="text-white">{{ log.search_query|truncatechars:40 }}</strong>
+                                </td>
+                                <td>
+                                    <span class="badge 
+                                        {% if log.status == 'completed' %}bg-success
+                                        {% elif log.status == 'error' %}bg-danger
+                                        {% elif log.status == 'started' %}bg-primary
+                                        {% elif log.status == 'downloading' %}bg-info
+                                        {% elif log.status == 'processing' %}bg-warning
+                                        {% elif log.status == 'embedding' %}bg-secondary
+                                        {% else %}bg-light text-dark{% endif %}">
+                                        
+                                        {% if log.status == 'completed' %}
+                                            <i class="fas fa-check me-1"></i>
+                                        {% elif log.status == 'error' %}
+                                            <i class="fas fa-times me-1"></i>
+                                        {% elif log.status == 'started' %}
+                                            <i class="fas fa-play me-1"></i>
+                                        {% elif log.status == 'downloading' %}
+                                            <i class="fas fa-download me-1"></i>
+                                        {% elif log.status == 'processing' %}
+                                            <i class="fas fa-cogs me-1"></i>
+                                        {% elif log.status == 'embedding' %}
+                                            <i class="fas fa-vector-square me-1"></i>
+                                        {% endif %}
+                                        
+                                        {{ log.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if log.papers_downloaded > 0 %}
+                                        <small class="text-light-gray">Downloaded:</small> <span class="text-white">{{ log.papers_downloaded }}</span><br>
+                                    {% endif %}
+                                    {% if log.papers_processed > 0 %}
+                                        <small class="text-light-gray">Processed:</small> <span class="text-white">{{ log.papers_processed }}</span>
+                                    {% endif %}
+                                    {% if log.papers_downloaded == 0 and log.papers_processed == 0 %}
+                                        <span class="text-light-gray">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if log.config_used %}
+                                        <small class="text-white">{{ log.config_used.name|truncatechars:20 }}</small>
+                                    {% else %}
+                                        <span class="text-light-gray">Deleted</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <small>{{ log.started_at|date:"d.m.Y H:i" }}</small>
+                                </td>
+                                <td>
+                                    {% if log.duration %}
+                                        <small class="text-white">{{ log.duration|floatformat:0 }}s</small>
+                                    {% else %}
+                                        <span class="text-light-gray">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if log.status == 'error' and log.error_message %}
+                                    <button class="btn btn-outline-danger btn-sm" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#errorModal{{ log.id }}">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                    </button>
+                                    
+                                    <!-- Error Modal -->
+                                    <div class="modal fade" id="errorModal{{ log.id }}" tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title text-white">
+                                                        <i class="fas fa-exclamation-triangle text-danger me-2"></i>
+                                                        Error Details
+                                                    </h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p class="text-white"><strong>Topic:</strong> {{ log.search_query }}</p>
+                                                    <p class="text-white"><strong>Error:</strong></p>
+                                                    <div class="alert alert-danger">
+                                                        {{ log.error_message }}
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                        Close
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% else %}
+                                        <span class="text-light-gray">-</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <div class="text-purple mb-3">
+                        <i class="fas fa-database" style="font-size: 3rem; opacity: 0.3;"></i>
+                    </div>
+                    <h5 class="text-light-gray">No Logs</h5>
+                    <p class="text-light-gray">There are no database preparation processes yet.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,1374 @@
+/* ====================================================================
+   RAG Research Assistant - Custom CSS
+   Theme: Dark purple modern design
+   ==================================================================== */
+
+:root {
+    /* Purple palette - dark theme */
+    --primary-purple: rgb(90, 0, 255);
+    --dark-purple: rgb(70, 0, 200);
+    --light-purple: rgb(120, 50, 255);
+    --pale-purple: rgba(90, 0, 255, 0.1);
+    --purple-gradient: linear-gradient(135deg, rgb(90, 0, 255) 0%, rgb(120, 30, 200) 100%);
+    --purple-gradient-dark: linear-gradient(135deg, rgb(70, 0, 200) 0%, rgb(50, 0, 150) 100%);
+    
+    /* Complementary colors - adjusted for dark theme */
+    --accent-pink: #ff4081;
+    --accent-blue: #00bcd4;
+    --success-green: #4caf50;
+    --warning-orange: #ff9800;
+    --danger-red: #f44336;
+    
+    /* Neutral colors - improved contrast dark theme */
+    --white: #E0E0E0;
+    --light-gray: #2a2a2a;
+    --medium-gray: #888888;
+    --dark-gray: #1a1a1a;
+    --darker-gray: #0f0f0f;
+    --black: #000000;
+    --card-bg: #121212;
+    --input-bg: #1e1e1e;
+    --border-color: #333333;
+    
+    /* Shadows - softer, more depth */
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+    --shadow-xl: 0 16px 32px rgba(0, 0, 0, 0.6);
+    --shadow-glow: 0 0 20px rgba(90, 0, 255, 0.2);
+    
+    /* Animations */
+    --transition-fast: 0.15s ease-in-out;
+    --transition-normal: 0.3s ease-in-out;
+    --transition-slow: 0.5s ease-in-out;
+}
+
+/* ====================================================================
+   GLOBAL STYLES
+   ==================================================================== */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.5;
+    color: var(--white);
+    background: linear-gradient(135deg, var(--black) 0%, var(--dark-gray) 50%, var(--darker-gray) 100%);
+    background-attachment: fixed;
+    padding-top: 70px; /* Reduced navbar height */
+    min-height: 100vh;
+}
+
+/* ====================================================================
+   NAVIGATION
+   ==================================================================== */
+
+.bg-gradient-purple {
+    background: var(--purple-gradient) !important;
+    box-shadow: var(--shadow-md);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    color: var(--white) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    transition: var(--transition-fast);
+    border-radius: 0.375rem;
+    margin: 0 0.25rem;
+    padding: 0.5rem 1rem !important;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+    color: var(--white) !important;
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
+}
+
+.navbar-text {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-size: 0.875rem;
+}
+
+/* ====================================================================
+   MAIN CONTENT
+   ==================================================================== */
+
+.main-content {
+    min-height: calc(100vh - 120px); /* Reduced content height */
+    padding: 1rem 0; /* Reduced padding */
+}
+
+.page-header {
+    background: var(--card-bg);
+    border-radius: 0.75rem; /* Smaller radius */
+    padding: 1.5rem; /* Reduced padding */
+    margin-bottom: 1.5rem; /* Reduced margin */
+    box-shadow: var(--shadow-glow);
+    border: 1px solid rgba(90, 0, 255, 0.3);
+}
+
+.page-title {
+    color: var(--white);
+    font-size: 2rem; /* Reduced font size */
+    font-weight: 700;
+    margin-bottom: 0.25rem; /* Reduced margin */
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.page-subtitle {
+    color: var(--medium-gray);
+    font-size: 1rem; /* Reduced font size */
+    margin-bottom: 0;
+}
+
+/* ====================================================================
+   CARDS AND PANELS
+   ==================================================================== */
+
+.card {
+    border: none;
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow-md);
+    transition: var(--transition-normal);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    margin-bottom: 1rem;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: rgba(90, 0, 255, 0.3);
+}
+
+.card-header {
+    background: var(--purple-gradient);
+    color: var(--white);
+    border-radius: 0.75rem 0.75rem 0 0 !important;
+    border: none;
+    padding: 1rem 1.25rem; /* Reduced padding */
+    font-weight: 600;
+}
+
+.card-body {
+    padding: 1.25rem; /* Reduced padding */
+    background: var(--card-bg);
+    color: var(--white);
+}
+
+.card-footer {
+    background: var(--card-bg) !important;
+    border-radius: 0 0 1rem 1rem !important;
+    border: none;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border-color);
+    color: var(--white) !important;
+}
+
+/* ====================================================================
+   BUTTONS
+   ==================================================================== */
+
+.btn {
+    border-radius: 0.75rem;
+    font-weight: 500;
+    transition: var(--transition-normal);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    text-transform: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s;
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+.btn-primary {
+    background: var(--purple-gradient);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover {
+    background: var(--purple-gradient-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    animation: pulse 0.3s ease-in-out;
+}
+
+.btn-outline-primary {
+    border: 2px solid var(--primary-purple);
+    color: var(--primary-purple);
+    background: transparent;
+    box-shadow: 0 0 0 rgba(90, 0, 255, 0);
+}
+
+.btn-outline-primary:hover {
+    background: var(--primary-purple);
+    border-color: var(--primary-purple);
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(90, 0, 255, 0.4);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    animation: pulse 0.3s ease-in-out;
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, #ff9800, #ffb74d);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-warning:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    animation: pulse 0.3s ease-in-out;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #dc3545, #e91e63);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    animation: pulse 0.3s ease-in-out;
+}
+
+.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+}
+
+.btn-sm i {
+    font-size: 0.8rem;
+}
+
+.btn-lg {
+    padding: 1rem 2rem;
+    font-size: 1.125rem;
+}
+
+/* ====================================================================
+   FORMS
+   ==================================================================== */
+
+.form-control {
+    border: 2px solid var(--border-color);
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    transition: var(--transition-fast);
+    background: var(--input-bg);
+    color: var(--white);
+}
+
+.form-control:focus {
+    border-color: var(--primary-purple);
+    box-shadow: 0 0 0 0.2rem rgba(90, 0, 255, 0.25);
+    background: var(--input-bg);
+    color: var(--white);
+}
+
+.form-control::placeholder {
+    color: var(--medium-gray);
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 0.5rem;
+}
+
+.form-text {
+    color: var(--medium-gray);
+    font-size: 0.875rem;
+}
+
+.input-group {
+    border-radius: 0.75rem;
+    overflow: hidden;
+}
+
+.input-group-text {
+    background: var(--primary-purple);
+    color: var(--white);
+    border: none;
+    font-weight: 500;
+}
+
+/* ====================================================================
+   ALERTS
+   ==================================================================== */
+
+.alert {
+    border: none;
+    border-radius: 0.75rem;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.2), rgba(76, 175, 80, 0.1));
+    color: var(--success-green);
+    border-left: 4px solid var(--success-green);
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, rgba(255, 152, 0, 0.2), rgba(255, 152, 0, 0.1));
+    color: var(--warning-orange);
+    border-left: 4px solid var(--warning-orange);
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, rgba(244, 67, 54, 0.2), rgba(244, 67, 54, 0.1));
+    color: var(--danger-red);
+    border-left: 4px solid var(--danger-red);
+}
+
+.alert-info {
+    background: linear-gradient(135deg, rgba(90, 0, 255, 0.2), rgba(90, 0, 255, 0.1));
+    color: var(--primary-purple);
+    border-left: 4px solid var(--primary-purple);
+}
+
+/* ====================================================================
+   TABLES
+   ==================================================================== */
+
+.table {
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    background: var(--card-bg);
+    color: var(--white);
+}
+
+.table thead th {
+    background: var(--purple-gradient);
+    color: var(--white);
+    border: none;
+    font-weight: 600;
+    padding: 1rem;
+}
+
+.table tbody td {
+    padding: 1rem;
+    border-color: var(--border-color);
+    vertical-align: middle;
+    background: var(--card-bg);
+    color: var(--white);
+}
+
+.table tbody tr:hover {
+    background: rgba(90, 0, 255, 0.1);
+}
+
+/* ====================================================================
+   BADGES AND STATUS
+   ==================================================================== */
+
+.badge {
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    font-weight: 500;
+    font-size: 0.75rem;
+}
+
+.badge-purple {
+    background: var(--primary-purple);
+    color: var(--white);
+}
+
+.badge-success {
+    background: var(--success-green);
+}
+
+.badge-warning {
+    background: var(--warning-orange);
+}
+
+.badge-danger {
+    background: var(--danger-red);
+}
+
+.status-active {
+    color: var(--success-green);
+    font-weight: 600;
+}
+
+.status-inactive {
+    color: var(--medium-gray);
+}
+
+/* ====================================================================
+   LOADING AND SPINNERS
+   ==================================================================== */
+
+.spinner-border-purple {
+    border-color: var(--primary-purple);
+    border-right-color: transparent;
+}
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loading-content {
+    background: var(--white);
+    padding: 2rem;
+    border-radius: 1rem;
+    text-align: center;
+    box-shadow: var(--shadow-xl);
+}
+
+/* ====================================================================
+   ANIMATIONS AND EFFECTS
+   ==================================================================== */
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1) translateY(-2px);
+    }
+    50% {
+        transform: scale(1.02) translateY(-2px);
+    }
+    100% {
+        transform: scale(1) translateY(-2px);
+    }
+}
+
+@keyframes glow {
+    0% {
+        box-shadow: 0 0 5px rgba(90, 0, 255, 0.2);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(90, 0, 255, 0.4);
+    }
+    100% {
+        box-shadow: 0 0 5px rgba(90, 0, 255, 0.2);
+    }
+}
+
+/* ====================================================================
+   RESPONSE AREAS
+   ==================================================================== */
+
+.query-response {
+    background: var(--card-bg);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+    box-shadow: var(--shadow-glow);
+    border-left: 4px solid var(--primary-purple);
+    border: 1px solid rgba(90, 0, 255, 0.3);
+}
+
+.response-content {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: var(--white);
+}
+
+.response-meta {
+    background: var(--light-gray);
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: var(--medium-gray);
+    border: 1px solid var(--border-color);
+}
+
+/* ====================================================================
+   FOOTER
+   ==================================================================== */
+
+.footer {
+    background: var(--darker-gray) !important;
+    border-top: 1px solid var(--border-color);
+}
+
+/* ====================================================================
+   RESPONSIVE DESIGN
+   ==================================================================== */
+
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 2rem;
+    }
+    
+    .page-header {
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .main-content {
+        padding: 1rem 0;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .btn {
+        padding: 0.625rem 1.25rem;
+    }
+}
+
+@media (max-width: 576px) {
+    body {
+        padding-top: 70px;
+    }
+    
+    .page-title {
+        font-size: 1.75rem;
+    }
+    
+    .page-header {
+        padding: 1rem;
+    }
+    
+    .navbar-brand {
+        font-size: 1.25rem;
+    }
+}
+
+/* ====================================================================
+   RESPONSIVE IMPROVEMENTS
+   ==================================================================== */
+
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .btn {
+        padding: 0.6rem 1.2rem;
+    }
+    
+    .btn-sm {
+        padding: 0.4rem 0.8rem;
+    }
+    
+    .btn i {
+        font-size: 0.8em;
+    }
+}
+
+/* ====================================================================
+   LIST GROUP IMPROVEMENTS
+   ==================================================================== */
+
+.list-group-item {
+    background-color: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+    color: var(--white) !important;
+}
+
+.list-group-item:hover {
+    background-color: var(--input-bg) !important;
+    transition: var(--transition-fast);
+}
+
+/* ====================================================================
+   BADGE IMPROVEMENTS
+   ==================================================================== */
+
+.badge-purple {
+    background: var(--purple-gradient) !important;
+    color: var(--white) !important;
+}
+
+/* ====================================================================
+   UTILITY CLASSES
+   ==================================================================== */
+
+.text-purple {
+    color: var(--white) !important;
+}
+
+.bg-purple {
+    background: var(--primary-purple) !important;
+}
+
+.bg-gradient-purple {
+    background: var(--purple-gradient) !important;
+}
+
+.border-purple {
+    border-color: var(--primary-purple) !important;
+}
+
+.shadow-purple {
+    box-shadow: var(--shadow-glow) !important;
+}
+
+.rounded-lg {
+    border-radius: 1rem !important;
+}
+
+.rounded-xl {
+    border-radius: 1.5rem !important;
+}
+
+.fw-600 {
+    font-weight: 600 !important;
+}
+
+.fw-700 {
+    font-weight: 700 !important;
+}
+
+/* ====================================================================
+   ADDITIONAL STYLES FOR DARK THEME
+   ==================================================================== */
+
+/* Dropdown Menu */
+.dropdown-menu {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-lg);
+}
+
+.dropdown-item {
+    color: var(--white);
+    transition: var(--transition-fast);
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+    background: rgba(90, 0, 255, 0.2);
+    color: var(--white);
+}
+
+/* List Group */
+.list-group-item {
+    background: var(--card-bg);
+    border-color: var(--border-color);
+    color: var(--white);
+}
+
+.list-group-item:hover {
+    background: rgba(90, 0, 255, 0.1);
+}
+
+/* Modal */
+.modal-content {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+}
+
+.modal-header {
+    border-bottom-color: var(--border-color);
+}
+
+.modal-footer {
+    border-top-color: var(--border-color);
+}
+
+.modal-title {
+    color: var(--white);
+}
+
+.modal-body {
+    color: var(--white);
+}
+
+/* Badge variations */
+.badge {
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    font-weight: 500;
+    font-size: 0.75rem;
+}
+
+.badge-purple {
+    background: var(--primary-purple);
+    color: var(--white);
+    box-shadow: 0 0 10px rgba(90, 0, 255, 0.3);
+}
+
+.badge-success {
+    background: var(--success-green);
+}
+
+.badge-warning {
+    background: var(--warning-orange);
+}
+
+.badge-danger {
+    background: var(--danger-red);
+}
+
+/* Status indicators */
+.status-active {
+    color: var(--success-green);
+    font-weight: 600;
+}
+
+.status-inactive {
+    color: var(--medium-gray);
+}
+
+/* Loading spinners */
+.spinner-border-purple {
+    border-color: var(--primary-purple);
+    border-right-color: transparent;
+}
+
+/* Loading overlay */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loading-content {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 1rem;
+    text-align: center;
+    box-shadow: var(--shadow-xl);
+    border: 1px solid rgba(90, 0, 255, 0.3);
+}
+
+/* Glow effects */
+.glow-purple {
+    box-shadow: 0 0 20px rgba(90, 0, 255, 0.5);
+}
+
+.text-glow {
+    text-shadow: 0 0 10px rgba(90, 0, 255, 0.7);
+}
+
+/* Special backgrounds */
+.bg-dark-card {
+    background: var(--card-bg) !important;
+}
+
+.bg-darker {
+    background: var(--darker-gray) !important;
+}
+
+/* Text colors for dark theme */
+.text-light-gray {
+    color: var(--medium-gray) !important;
+}
+
+.text-white {
+    color: var(--white) !important;
+}
+
+/* Border utilities */
+.border-dark {
+    border-color: var(--border-color) !important;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--dark-gray);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-purple);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--light-purple);
+}
+
+/* Selection styling */
+::selection {
+    background: rgba(90, 0, 255, 0.3);
+    color: var(--white);
+}
+
+/* ====================================================================
+   FORM IMPROVEMENTS FOR DARK THEME
+   ==================================================================== */
+
+/* Ensure all form elements have proper contrast */
+.form-control, .form-select {
+    background-color: var(--input-bg) !important;
+    border-color: var(--border-color) !important;
+    color: var(--white) !important;
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: var(--input-bg) !important;
+    border-color: var(--primary-purple) !important;
+    color: var(--white) !important;
+    box-shadow: 0 0 0 0.2rem rgba(90, 0, 255, 0.25) !important;
+}
+
+/* Ensure text is white in all form elements */
+.form-control::placeholder,
+.form-select option {
+    color: var(--medium-gray) !important;
+}
+
+/* Fix for select options in dark theme */
+.form-select option {
+    background-color: var(--input-bg) !important;
+    color: var(--white) !important;
+}
+
+/* Textarea specific styles */
+textarea.form-control {
+    background-color: var(--input-bg) !important;
+    color: var(--white) !important;
+    border-color: var(--border-color) !important;
+}
+
+/* Input group styling */
+.input-group .form-control {
+    background-color: var(--input-bg) !important;
+    border-color: var(--border-color) !important;
+    color: var(--white) !important;
+}
+
+/* Bootstrap specific overrides */
+.text-muted {
+    color: var(--medium-gray) !important;
+}
+
+.text-dark {
+    color: var(--white) !important;
+}
+
+/* Form text improvements */
+.form-text,
+.form-text.text-muted {
+    color: var(--medium-gray) !important;
+}
+
+/* Label improvements */
+label,
+.form-label {
+    color: var(--white) !important;
+    font-weight: 500;
+}
+
+/* Help text */
+.help-text,
+small.form-text {
+    color: var(--medium-gray) !important;
+}
+
+/* Configuration specific styles */
+.config-section {
+    background: var(--card-bg) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 0.75rem !important;
+    color: var(--white) !important;
+}
+
+.config-section .card-header {
+    background: var(--purple-gradient) !important;
+    color: var(--white) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+.config-section .card-body {
+    background: var(--card-bg) !important;
+    color: var(--white) !important;
+}
+
+/* Tab content styling */
+.tab-content {
+    background: var(--card-bg) !important;
+    border: 1px solid var(--border-color) !important;
+    border-top: none !important;
+    border-radius: 0 0 0.75rem 0.75rem !important;
+    padding: 1.5rem !important;
+    color: var(--white) !important;
+}
+
+/* Nav tabs styling */
+.nav-tabs {
+    border-bottom-color: var(--border-color) !important;
+}
+
+.nav-tabs .nav-link {
+    color: var(--medium-gray) !important;
+    background: var(--light-gray) !important;
+    border-color: var(--border-color) !important;
+}
+
+.nav-tabs .nav-link:hover {
+    color: var(--white) !important;
+    background: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+}
+
+.nav-tabs .nav-link.active {
+    color: var(--white) !important;
+    background: var(--card-bg) !important;
+    border-color: var(--border-color) var(--border-color) var(--card-bg) !important;
+}
+
+/* Progress bar styling */
+.progress {
+    background-color: var(--light-gray) !important;
+}
+
+.progress-bar {
+    background: var(--purple-gradient) !important;
+}
+
+/* List group improvements */
+.list-group-item {
+    background: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+    color: var(--white) !important;
+}
+
+.list-group-item:hover {
+    background: rgba(90, 0, 255, 0.1) !important;
+    color: var(--white) !important;
+}
+
+/* Accordion improvements */
+.accordion-item {
+    background: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+}
+
+.accordion-header button {
+    background: var(--light-gray) !important;
+    color: var(--white) !important;
+    border: none !important;
+}
+
+.accordion-body {
+    background: var(--card-bg) !important;
+    color: var(--white) !important;
+}
+
+/* Close button for dark theme */
+.btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* Ensure all text elements are visible */
+p, span, div, small, code, pre {
+    color: inherit;
+}
+
+/* Override Bootstrap text utilities */
+.text-secondary {
+    color: var(--medium-gray) !important;
+}
+
+.text-primary {
+    color: var(--primary-purple) !important;
+}
+
+/* Ensure form validation text is visible */
+.invalid-feedback {
+    color: var(--danger-red) !important;
+}
+
+.valid-feedback {
+    color: var(--success-green) !important;
+}
+
+/* ====================================================================
+   ADDITIONAL DARK THEME FIXES
+   ==================================================================== */
+
+/* Fix for white text visibility */
+body, .card-body, .modal-body {
+    color: var(--white) !important;
+}
+
+/* Ensure all input elements have proper styling */
+input[type="text"], 
+input[type="email"], 
+input[type="number"], 
+input[type="url"], 
+input[type="password"], 
+textarea, 
+select {
+    background-color: var(--input-bg) !important;
+    border-color: var(--border-color) !important;
+    color: var(--white) !important;
+}
+
+input[type="text"]:focus, 
+input[type="email"]:focus, 
+input[type="number"]:focus, 
+input[type="url"]:focus, 
+input[type="password"]:focus, 
+textarea:focus, 
+select:focus {
+    background-color: var(--input-bg) !important;
+    border-color: var(--primary-purple) !important;
+    color: var(--white) !important;
+    box-shadow: 0 0 0 0.2rem rgba(90, 0, 255, 0.25) !important;
+}
+
+/* Fix for form labels and text */
+label, .form-label, .form-check-label {
+    color: var(--white) !important;
+}
+
+/* Fix for checkboxes and switches */
+.form-check-input:checked {
+    background-color: var(--primary-purple) !important;
+    border-color: var(--primary-purple) !important;
+}
+
+.form-switch .form-check-input:checked {
+    background-color: var(--primary-purple) !important;
+    border-color: var(--primary-purple) !important;
+}
+
+/* Fix for dropdown menus */
+.dropdown-menu {
+    background-color: var(--card-bg) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+.dropdown-item {
+    color: var(--white) !important;
+}
+
+.dropdown-item:hover, .dropdown-item:focus {
+    background-color: rgba(90, 0, 255, 0.2) !important;
+    color: var(--white) !important;
+}
+
+/* Fix for navbar text */
+.navbar-text {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Fix for small text and help text */
+small, .small, .form-text {
+    color: var(--medium-gray) !important;
+}
+
+/* Fix for cards in configuration panels */
+.bg-light {
+    background-color: var(--card-bg) !important;
+    color: var(--white) !important;
+}
+
+/* Fix for table styling */
+.table-dark {
+    --bs-table-bg: var(--card-bg);
+    --bs-table-color: var(--white);
+}
+
+/* Fix for pagination */
+.page-link {
+    background-color: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+    color: var(--white) !important;
+}
+
+.page-link:hover {
+    background-color: var(--primary-purple) !important;
+    border-color: var(--primary-purple) !important;
+    color: var(--white) !important;
+}
+
+.page-item.active .page-link {
+    background-color: var(--primary-purple) !important;
+    border-color: var(--primary-purple) !important;
+}
+
+/* Fix for code blocks */
+code, pre {
+    background-color: var(--darker-gray) !important;
+    color: var(--white) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+/* Fix for blockquotes */
+blockquote {
+    border-left: 4px solid var(--primary-purple) !important;
+    background-color: rgba(90, 0, 255, 0.1) !important;
+    color: var(--white) !important;
+}
+
+/* Fix for hr elements */
+hr {
+    border-color: var(--border-color) !important;
+}
+
+/* Ensure proper text contrast everywhere */
+p, span, div, h1, h2, h3, h4, h5, h6 {
+    color: inherit;
+}
+
+/* Fix specific Bootstrap utility classes */
+.text-muted {
+    color: var(--medium-gray) !important;
+}
+
+.text-dark {
+    color: var(--white) !important;
+}
+
+.text-black-50 {
+    color: var(--medium-gray) !important;
+}
+
+.bg-white {
+    background-color: var(--card-bg) !important;
+}
+
+.bg-light {
+    background-color: var(--light-gray) !important;
+}
+
+/* Fix for form validation */
+.was-validated .form-control:valid,
+.form-control.is-valid {
+    border-color: var(--success-green) !important;
+    background-color: var(--input-bg) !important;
+    color: var(--white) !important;
+}
+
+.was-validated .form-control:invalid,
+.form-control.is-invalid {
+    border-color: var(--danger-red) !important;
+    background-color: var(--input-bg) !important;
+    color: var(--white) !important;
+}
+
+/* Fix for tooltips */
+.tooltip .tooltip-inner {
+    background-color: var(--darker-gray) !important;
+    color: var(--white) !important;
+}
+
+/* Fix for popovers */
+.popover {
+    background-color: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+}
+
+.popover-header {
+    background-color: var(--light-gray) !important;
+    border-bottom-color: var(--border-color) !important;
+    color: var(--white) !important;
+}
+
+.popover-body {
+    color: var(--white) !important;
+}
+
+/* Fix for badges */
+.badge {
+    color: var(--white) !important;
+}
+
+.badge.bg-light {
+    background-color: var(--light-gray) !important;
+    color: var(--white) !important;
+}
+
+.badge.bg-secondary {
+    background-color: var(--medium-gray) !important;
+    color: var(--white) !important;
+}
+
+/* Fix for breadcrumb */
+.breadcrumb {
+    background-color: var(--card-bg) !important;
+}
+
+.breadcrumb-item a {
+    color: var(--primary-purple) !important;
+}
+
+.breadcrumb-item.active {
+    color: var(--white) !important;
+}
+
+/* Ensure all elements in cards use proper colors */
+.card * {
+    color: inherit;
+}
+
+.card .text-muted {
+    color: var(--medium-gray) !important;
+}
+
+/* Fix for list groups */
+.list-group-item {
+    background-color: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+    color: var(--white) !important;
+}
+
+.list-group-item:hover {
+    background-color: rgba(90, 0, 255, 0.1) !important;
+}
+
+/* Fix for offcanvas */
+.offcanvas {
+    background-color: var(--card-bg) !important;
+    color: var(--white) !important;
+}
+
+.offcanvas-header {
+    border-bottom-color: var(--border-color) !important;
+}
+
+/* Fix for carousel */
+.carousel-caption {
+    background-color: rgba(0, 0, 0, 0.7) !important;
+}
+
+/* Fix for progress bars */
+.progress {
+    background-color: var(--light-gray) !important;
+}
+
+.progress-bar {
+    background-color: var(--primary-purple) !important;
+}
+
+/* Additional form element fixes */
+.form-range::-webkit-slider-thumb {
+    background-color: var(--primary-purple) !important;
+}
+
+.form-range::-moz-range-thumb {
+    background-color: var(--primary-purple) !important;
+    border: none !important;
+}
+
+/* Fix for file input */
+.form-control[type="file"] {
+    background-color: var(--input-bg) !important;
+    border-color: var(--border-color) !important;
+    color: var(--white) !important;
+}
+
+.form-control[type="file"]::-webkit-file-upload-button {
+    background-color: var(--primary-purple) !important;
+    border: none !important;
+    color: var(--white) !important;
+    border-radius: 0.375rem !important;
+}
+
+/* Last resort - force white text on dark backgrounds */
+.bg-dark, .bg-black, [class*="bg-dark"], [class*="bg-black"] {
+    color: var(--white) !important;
+}
+
+.bg-dark *, .bg-black *, [class*="bg-dark"] *, [class*="bg-black"] * {
+    color: inherit !important;
+}
+
+/* Fix for "Quick Actions" and other card text to be white */
+.card h6, .card h5, .card h4, .card h3, .card h2, .card h1 {
+    color: var(--white) !important;
+}
+
+.card-body h6, .card-body h5, .card-body h4, .card-body h3, .card-body h2, .card-body h1 {
+    color: var(--white) !important;
+}
+
+/* Fix for card headers to have white text */
+.card-header h1, .card-header h2, .card-header h3, .card-header h4, .card-header h5, .card-header h6 {
+    color: var(--white) !important;
+}
+
+/* Fix for question form header */
+.card-header .mb-0 {
+    color: var(--white) !important;
+}
+
+/* Make sure all card content is properly styled */
+.card-body p, .card-body div, .card-body span {
+    color: var(--white) !important;
+}
+
+.card-body .small, .card-body small {
+    color: var(--medium-gray) !important;
+}
+
+/* Fix for Edit button and other footer buttons to match card background */
+.card-footer .btn {
+    background: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+    color: var(--white) !important;
+}
+
+.card-footer .btn-outline-primary {
+    background: transparent !important;
+    border-color: var(--primary-purple) !important;
+    color: var(--primary-purple) !important;
+}
+
+.card-footer .btn-outline-primary:hover {
+    background: var(--primary-purple) !important;
+    border-color: var(--primary-purple) !important;
+    color: var(--white) !important;
+}

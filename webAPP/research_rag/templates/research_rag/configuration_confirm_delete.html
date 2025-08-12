@@ -1,0 +1,71 @@
+{% extends 'research_rag/base.html' %}
+{% load static %}
+
+{% block title %}Delete Configuration - RAG Research Assistant{% endblock %}
+
+{% block page_icon %}<i class="fas fa-trash text-danger"></i>{% endblock %}
+{% block page_title %}Delete Configuration{% endblock %}
+{% block page_subtitle %}Confirm configuration deletion{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Delete Confirmation
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <i class="fas fa-warning me-2"></i>
+                    <strong>Warning!</strong> This action is irreversible.
+                </div>
+                
+                <p>Are you sure you want to delete the configuration:</p>
+                <h4 class="text-danger">{{ config.name }}</h4>
+                
+                <div class="mt-4">
+                    <h6>Configuration Details:</h6>
+                    <ul class="list-unstyled">
+                        <li><strong>Model:</strong> {{ config.model_name }}</li>
+                        <li><strong>Collection:</strong> {{ config.collection_name }}</li>
+                        <li><strong>Created:</strong> {{ config.created_at|date:"d.m.Y H:i" }}</li>
+                        <li><strong>Status:</strong> 
+                            {% if config.is_active %}
+                                <span class="badge bg-success">Active</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Inactive</span>
+                            {% endif %}
+                        </li>
+                    </ul>
+                </div>
+                
+                {% if config.is_active %}
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    This configuration is currently active. Deleting it may affect system functionality.
+                </div>
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'configurations' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>
+                        Cancel
+                    </a>
+                    
+                    <form method="post" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash me-2"></i>
+                            Delete Configuration
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

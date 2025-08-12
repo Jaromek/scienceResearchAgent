@@ -1,0 +1,314 @@
+{% extends 'research_rag/base.html' %}
+{% load static %}
+
+{% block title %}RAG Configurations - RAG Research Assistant{% endblock %}
+
+{% block page_icon %}<i class="fas fa-cogs"></i>{% endblock %}
+{% block page_title %}RAG Configurations{% endblock %}
+{% block page_subtitle %}Manage AI model parameters, databases and response generation processes{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Main panel with configurations -->
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="text-purple mb-0">
+                <i class="fas fa-list me-2"></i>
+                Configuration List
+            </h3>
+            <a href="{% url 'configuration_create' %}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>
+                New Configuration
+            </a>
+        </div>
+        
+        {% if configurations %}
+        <div class="row">
+            {% for config in configurations %}
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100 {% if config.is_active %}border-success{% endif %}">
+                    <div class="card-header {% if config.is_active %}bg-success text-white{% endif %}">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0">
+                                {% if config.is_active %}
+                                    <i class="fas fa-check-circle me-2"></i>
+                                {% else %}
+                                    <i class="fas fa-cog me-2"></i>
+                                {% endif %}
+                                {{ config.name }}
+                            </h6>
+                            {% if config.is_active %}
+                                <span class="badge bg-light text-success">
+                                    <i class="fas fa-bolt me-1"></i>Active
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary">
+                                    <i class="fas fa-pause me-1"></i>Inactive
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="card-body">
+                        <!-- Model Parameters -->
+                        <div class="mb-3">
+                            <h6 class="text-purple mb-2">
+                                <i class="fas fa-robot me-2"></i>
+                                Model Parameters
+                            </h6>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <div class="bg-dark-card rounded p-2 text-center border border-dark">
+                                        <small class="text-light-gray d-block">Model</small>
+                                        <strong class="text-white text-truncate">{{ config.model_name }}</strong>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="bg-dark-card rounded p-2 text-center border border-dark">
+                                        <small class="text-light-gray d-block">Temperature</small>
+                                        <strong class="text-white">{{ config.temperature }}</strong>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="bg-dark-card rounded p-2 text-center border border-dark">
+                                        <small class="text-light-gray d-block">Max tokens</small>
+                                        <strong class="text-white">{{ config.max_tokens }}</strong>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="bg-dark-card rounded p-2 text-center border border-dark">
+                                        <small class="text-light-gray d-block">Ollama URL</small>
+                                        <strong class="text-white text-truncate">{{ config.ollama_url|slice:":20" }}...</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Database Parameters -->
+                        <div class="mb-3">
+                            <h6 class="text-purple mb-2">
+                                <i class="fas fa-database me-2"></i>
+                                Database Parameters
+                            </h6>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <div class="bg-dark-card rounded p-2 text-center border border-dark">
+                                        <small class="text-light-gray d-block">Collection</small>
+                                        <strong class="text-white text-truncate">{{ config.collection_name }}</strong>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="bg-dark-card rounded p-2 text-center border border-dark">
+                                        <small class="text-light-gray d-block">Chunks (k)</small>
+                                        <strong class="text-white">{{ config.k_chunks }}</strong>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="bg-dark-card rounded p-2 text-center border border-dark">
+                                        <small class="text-light-gray d-block">Max papers</small>
+                                        <strong class="text-white">{{ config.max_papers }}</strong>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="bg-dark-card rounded p-2 text-center border border-dark">
+                                        <small class="text-light-gray d-block">Directory</small>
+                                        <strong class="text-white text-truncate">{{ config.download_directory }}</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Metadata -->
+                        <div class="mb-3">
+                            <small class="text-light-gray">
+                                <i class="fas fa-calendar me-1"></i>
+                                Created: {{ config.created_at|date:"d.m.Y H:i" }}
+                            </small>
+                            <br>
+                            <small class="text-light-gray">
+                                <i class="fas fa-edit me-1"></i>
+                                Updated: {{ config.updated_at|date:"d.m.Y H:i" }}
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <div class="card-footer bg-dark-card border-dark">
+                        <div class="d-flex gap-2">
+                            {% if not config.is_active %}
+                            <button class="btn btn-success btn-sm activate-config-btn flex-grow-1"
+                                    data-config-id="{{ config.id }}"
+                                    data-config-name="{{ config.name }}">
+                                <i class="fas fa-play me-1"></i>Activate
+                            </button>
+                            {% endif %}
+                            
+                            <a href="{% url 'configuration_edit' config.id %}" 
+                               class="btn btn-outline-secondary btn-sm flex-grow-1">
+                                <i class="fas fa-edit me-1"></i>Edit
+                            </a>
+                            
+                            {% if not config.is_active %}
+                            <a href="{% url 'configuration_delete' config.id %}" 
+                               class="btn btn-outline-danger btn-sm">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination (if needed in the future) -->
+        
+        {% else %}
+        <!-- No configurations -->
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card text-center">
+                    <div class="card-body py-5">
+                        <div class="text-purple mb-4">
+                            <i class="fas fa-cogs" style="font-size: 4rem; opacity: 0.3;"></i>
+                        </div>
+                        <h4 class="text-purple">No Configurations</h4>
+                        <p class="text-light-gray mb-4">
+                            You don't have any RAG configurations yet. 
+                            Create your first configuration to start working with the system.
+                        </p>
+                        <a href="{% url 'configuration_create' %}" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>
+                            Create First Configuration
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Activation confirmation modal -->
+<div class="modal fade" id="activateModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-white">
+                    <i class="fas fa-question-circle text-warning me-2"></i>
+                    Confirm Activation
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-white">Are you sure you want to activate the selected configuration?</p>
+                <p class="text-light-gray small">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Only one configuration can be active at a time. 
+                    The current active configuration will be deactivated.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Cancel
+                </button>
+                <button type="button" class="btn btn-success" id="confirmActivate">
+                    <i class="fas fa-check me-1"></i>
+                    Activate
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    let configToActivate = null;
+    
+    // Configuration activation handler
+    $('.activate-config-btn').on('click', function() {
+        configToActivate = {
+            id: $(this).data('config-id'),
+            name: $(this).data('config-name'),
+            button: $(this)
+        };
+        
+        $('#activateModal').modal('show');
+    });
+    
+    // Activation confirmation
+    $('#confirmActivate').on('click', function() {
+        if (!configToActivate) return;
+        
+        const btn = configToActivate.button;
+        const originalText = btn.html();
+        
+        // Loading state
+        btn.prop('disabled', true);
+        btn.html('<i class="fas fa-spinner fa-spin me-1"></i>Activating...');
+        
+        $.ajax({
+            url: `/config/${configToActivate.id}/activate/`,
+            type: 'POST',
+            headers: {
+                'X-CSRFToken': $('[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(data) {
+                if (data.success) {
+                    $('#activateModal').modal('hide');
+                    
+                    // Pokaż sukces
+                    showAlert(data.message, 'success');
+                    
+                    // Odśwież stronę po 1 sekundzie
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                } else {
+                    showAlert(data.message, 'danger');
+                    btn.prop('disabled', false);
+                    btn.html(originalText);
+                }
+            },
+            error: function() {
+                showAlert('Błąd podczas aktywacji konfiguracji.', 'danger');
+                btn.prop('disabled', false);
+                btn.html(originalText);
+            }
+        });
+    });
+    
+    // Reset przy zamknięciu modala
+    $('#activateModal').on('hidden.bs.modal', function() {
+        configToActivate = null;
+    });
+});
+
+function showAlert(message, type = 'info') {
+    const alertClass = `alert-${type}`;
+    const iconClass = {
+        'success': 'fas fa-check-circle',
+        'warning': 'fas fa-exclamation-triangle',
+        'danger': 'fas fa-exclamation-circle',
+        'info': 'fas fa-info-circle'
+    }[type] || 'fas fa-info-circle';
+    
+    const alertHtml = `
+        <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
+            <i class="${iconClass} me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+    
+    $('.main-content .container').prepend(alertHtml);
+    
+    setTimeout(function() {
+        $('.alert').first().fadeOut('slow', function() {
+            $(this).remove();
+        });
+    }, 5000);
+}
+</script>
+{% endblock %}

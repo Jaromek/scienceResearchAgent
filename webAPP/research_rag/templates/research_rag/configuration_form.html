@@ -1,0 +1,423 @@
+{% extends 'research_rag/base.html' %}
+{% load static %}
+
+{% block title %}
+{% if config %}Edit Configuration{% else %}New Configuration{% endif %} - RAG Research Assistant
+{% endblock %}
+
+{% block page_icon %}<i class="fas fa-{% if config %}edit{% else %}plus{% endif %}"></i>{% endblock %}
+{% block page_title %}
+{% if config %}
+Edit Configuration: {{ config.name }}
+{% else %}
+New RAG Configuration
+{% endif %}
+{% endblock %}
+{% block page_subtitle %}
+{% if config %}
+Modify existing configuration parameters
+{% else %}
+Create a new configuration with custom parameters
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <form method="post" class="needs-validation" novalidate>
+            {% csrf_token %}
+            
+            <!-- Basic Information Section -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0 text-white">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Basic Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                {{ form.name.label_tag }}
+                                {{ form.name }}
+                                {% if form.name.help_text %}
+                                <div class="form-text">{{ form.name.help_text }}</div>
+                                {% endif %}
+                                {% if form.name.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.name.errors %}{{ error }}{% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    {{ form.is_active }}
+                                    <label class="form-check-label text-white" for="{{ form.is_active.id_for_label }}">
+                                        <strong>Set as Active</strong>
+                                    </label>
+                                </div>
+                                {% if form.is_active.help_text %}
+                                <div class="form-text">{{ form.is_active.help_text }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LLM Model Parameters Section -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 text-white">
+                            <i class="fas fa-robot me-2"></i>
+                            LLM Model Parameters
+                        </h5>
+                        <button type="button" class="btn btn-outline-primary btn-sm test-model-btn text-white">
+                            <i class="fas fa-flask me-1 text-white"></i><span class="text-white">Test Model</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.model_name.label_tag }}
+                                <div class="input-group">
+                                    {{ form.model_name }}
+                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" 
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-list"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        {% for model in available_models %}
+                                        <li>
+                                            <a class="dropdown-item model-option" href="#" data-model="{{ model }}">
+                                                <i class="fas fa-robot me-2"></i>{{ model }}
+                                            </a>
+                                        </li>
+                                        {% empty %}
+                                        <li><span class="dropdown-item-text text-muted">No available models</span></li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                {% if form.model_name.help_text %}
+                                <div class="form-text">{{ form.model_name.help_text }}</div>
+                                {% endif %}
+                                {% if form.model_name.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.model_name.errors %}{{ error }}{% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.ollama_url.label_tag }}
+                                {{ form.ollama_url }}
+                                {% if form.ollama_url.help_text %}
+                                <div class="form-text">{{ form.ollama_url.help_text }}</div>
+                                {% endif %}
+                                {% if form.ollama_url.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.ollama_url.errors %}{{ error }}{% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.temperature.label_tag }}
+                                <div class="input-group">
+                                    {{ form.temperature }}
+                                    <span class="input-group-text">
+                                        <i class="fas fa-thermometer-half"></i>
+                                    </span>
+                                </div>
+                                {% if form.temperature.help_text %}
+                                <div class="form-text">{{ form.temperature.help_text }}</div>
+                                {% endif %}
+                                {% if form.temperature.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.temperature.errors %}{{ error }}{% endfor %}
+                                </div>
+                                {% endif %}
+                                
+                                <!-- Slider dla temperatury -->
+                                <div class="mt-2">
+                                    <input type="range" class="form-range" id="temperature-slider" 
+                                           min="0" max="2" step="0.1" value="{{ form.temperature.value|default:0.1 }}">
+                                    <div class="d-flex justify-content-between">
+                                        <small class="text-muted">Deterministic (0.0)</small>
+                                        <small class="text-muted">Creative (2.0)</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.max_tokens.label_tag }}
+                                <div class="input-group">
+                                    {{ form.max_tokens }}
+                                    <span class="input-group-text">
+                                        <i class="fas fa-text-width"></i>
+                                    </span>
+                                </div>
+                                {% if form.max_tokens.help_text %}
+                                <div class="form-text">{{ form.max_tokens.help_text }}</div>
+                                {% endif %}
+                                {% if form.max_tokens.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.max_tokens.errors %}{{ error }}{% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Database Parameters Section -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0 text-white">
+                        <i class="fas fa-database me-2"></i>
+                        Database Parameters
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.collection_name.label_tag }}
+                                {{ form.collection_name }}
+                                {% if form.collection_name.help_text %}
+                                <div class="form-text">{{ form.collection_name.help_text }}</div>
+                                {% endif %}
+                                {% if form.collection_name.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.collection_name.errors %}{{ error }}{% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.k_chunks.label_tag }}
+                                <div class="input-group">
+                                    {{ form.k_chunks }}
+                                    <span class="input-group-text">
+                                        <i class="fas fa-layer-group"></i>
+                                    </span>
+                                </div>
+                                {% if form.k_chunks.help_text %}
+                                <div class="form-text">{{ form.k_chunks.help_text }}</div>
+                                {% endif %}
+                                {% if form.k_chunks.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.k_chunks.errors %}{{ error }}{% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Database Preparation Parameters Section -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0 text-white">
+                        <i class="fas fa-download me-2"></i>
+                        Database Preparation Parameters
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.max_papers.label_tag }}
+                                <div class="input-group">
+                                    {{ form.max_papers }}
+                                    <span class="input-group-text">
+                                        <i class="fas fa-file-alt"></i>
+                                    </span>
+                                </div>
+                                {% if form.max_papers.help_text %}
+                                <div class="form-text">{{ form.max_papers.help_text }}</div>
+                                {% endif %}
+                                {% if form.max_papers.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.max_papers.errors %}{{ error }}{% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.download_directory.label_tag }}
+                                <div class="input-group">
+                                    {{ form.download_directory }}
+                                    <span class="input-group-text">
+                                        <i class="fas fa-folder"></i>
+                                    </span>
+                                </div>
+                                {% if form.download_directory.help_text %}
+                                <div class="form-text">{{ form.download_directory.help_text }}</div>
+                                {% endif %}
+                                {% if form.download_directory.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.download_directory.errors %}{{ error }}{% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'configurations' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>
+                            Back to list
+                        </a>
+                        
+                        <div class="d-flex gap-2">
+                            {% if config %}
+                            <button type="button" class="btn btn-outline-warning" onclick="resetForm()">
+                                <i class="fas fa-undo me-2"></i>
+                                Reset changes
+                            </button>
+                            {% endif %}
+                            
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>
+                                {% if config %}Save changes{% else %}Create configuration{% endif %}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    // Synchronizacja slidera temperatury z polem input
+    const temperatureInput = $('#id_temperature');
+    const temperatureSlider = $('#temperature-slider');
+    
+    temperatureSlider.on('input', function() {
+        temperatureInput.val($(this).val());
+    });
+    
+    temperatureInput.on('input', function() {
+        temperatureSlider.val($(this).val());
+    });
+    
+    // Wybór modelu z dropdown
+    $('.model-option').on('click', function(e) {
+        e.preventDefault();
+        const modelName = $(this).data('model');
+        $('#id_model_name').val(modelName);
+    });
+    
+    // Model testing
+    $('.test-model-btn').on('click', function() {
+        const modelName = $('#id_model_name').val();
+        const ollamaUrl = $('#id_ollama_url').val();
+        
+        if (!modelName || !ollamaUrl) {
+            showAlert('Please enter model name and Ollama URL before testing.', 'warning');
+            return;
+        }
+        
+        const btn = $(this);
+        const originalText = btn.html();
+        
+        // Loading state
+        btn.prop('disabled', true);
+        btn.html('<i class="fas fa-spinner fa-spin me-1 text-white"></i><span class="text-white">Testing...</span>');
+        
+        $.ajax({
+            url: '/api/test-model/',
+            type: 'POST',
+            data: JSON.stringify({
+                model_name: modelName,
+                ollama_url: ollamaUrl
+            }),
+            contentType: 'application/json',
+            success: function(data) {
+                btn.prop('disabled', false);
+                btn.html(originalText);
+                
+                if (data.success) {
+                    showAlert(data.message, 'success');
+                } else {
+                    showAlert(data.message, 'danger');
+                }
+            },
+            error: function() {
+                btn.prop('disabled', false);
+                btn.html(originalText);
+                showAlert('Error during model testing.', 'danger');
+            }
+        });
+    });
+    
+    // Form validation
+    $('form').on('submit', function(e) {
+        if (!this.checkValidity()) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        $(this).addClass('was-validated');
+    });
+});
+
+// Form reset
+function resetForm() {
+    if (confirm('Are you sure you want to restore original values? All unsaved changes will be lost.')) {
+        location.reload();
+    }
+}
+
+function showAlert(message, type = 'info') {
+    const alertClass = `alert-${type}`;
+    const iconClass = {
+        'success': 'fas fa-check-circle',
+        'warning': 'fas fa-exclamation-triangle',
+        'danger': 'fas fa-exclamation-circle',
+        'info': 'fas fa-info-circle'
+    }[type] || 'fas fa-info-circle';
+    
+    const alertHtml = `
+        <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
+            <i class="${iconClass} me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+    
+    $('.main-content .container').prepend(alertHtml);
+    
+    setTimeout(function() {
+        $('.alert').first().fadeOut('slow', function() {
+            $(this).remove();
+        });
+    }, 5000);
+}
+</script>
+{% endblock %}

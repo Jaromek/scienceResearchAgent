@@ -1,0 +1,295 @@
+{% extends 'research_rag/base.html' %}
+{% load static %}
+
+{% block title %}Query History - RAG Research Assistant{% endblock %}
+
+{% block page_icon %}<i class="fas fa-history"></i>{% endblock %}
+{% block page_title %}Query History{% endblock %}
+{% block page_subtitle %}Browse previous questions and system responses{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <!-- Search -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form method="get" class="d-flex gap-3 align-items-end">
+                    <div class="flex-grow-1">
+                        <label for="search" class="form-label">Search in history:</label>
+                        <input type="text" name="search" id="search" class="form-control" 
+                               value="{{ search_query }}" 
+                               placeholder="Enter keywords from question or answer...">
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search me-2"></i>Search
+                        </button>
+                    </div>
+                    {% if search_query %}
+                    <div>
+                        <a href="{% url 'query_history' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-2"></i>Clear
+                        </a>
+                    </div>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+
+        <!-- Query list -->
+        {% if queries %}
+        <div class="row">
+            {% for query in queries %}
+            <div class="col-12 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1 text-purple">
+                                    <i class="fas fa-question-circle me-2"></i>
+                                    Query #{{ query.id }}
+                                </h6>
+                                <small class="text-light-gray">
+                                    <i class="fas fa-clock me-1"></i>
+                                    {{ query.created_at|date:"d.m.Y H:i" }}
+                                    {% if query.processing_time %}
+                                    | <i class="fas fa-stopwatch me-1"></i>{{ query.processing_time|floatformat:2 }}s
+                                    {% endif %}
+                                    {% if query.config_used %}
+                                    | <i class="fas fa-cog me-1"></i>{{ query.config_used.name }}
+                                    {% endif %}
+                                </small>
+                            </div>
+                            
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-light" data-bs-toggle="dropdown">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <a class="dropdown-item copy-query-btn" href="#" 
+                                           data-query="{{ query.query_text }}">
+                                            <i class="fas fa-copy me-2"></i>Copy question
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item copy-response-btn" href="#" 
+                                           data-response="{{ query.response_text|escape }}">
+                                            <i class="fas fa-clipboard me-2"></i>Copy response
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item reuse-query-btn" href="{% url 'index' %}" 
+                                           data-query="{{ query.query_text }}">
+                                            <i class="fas fa-redo me-2"></i>Ask again
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-body">
+                        <!-- Question -->
+                        <div class="mb-4">
+                            <h6 class="text-purple mb-2">
+                                <i class="fas fa-user me-1"></i>Question:
+                            </h6>
+                            <div class="bg-darker rounded p-3">
+                                <p class="mb-0 text-white">{{ query.query_text }}</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Odpowiedź -->
+                        <div>
+                            <h6 class="text-purple mb-2">
+                                <i class="fas fa-robot me-1"></i>Odpowiedź AI:
+                            </h6>
+                            <div class="bg-darker rounded p-3">
+                                <div class="text-white">
+                                    {{ query.response_text|linebreaks }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if query.user_ip or query.processing_time %}
+                    <div class="card-footer">
+                        <div class="row text-center">
+                            {% if query.processing_time %}
+                            <div class="col-md-4">
+                                <small class="text-light-gray d-block">Processing time:</small>
+                                <strong class="text-white">{{ query.processing_time|floatformat:2 }}s</strong>
+                            </div>
+                            {% endif %}
+                            {% if query.config_used %}
+                            <div class="col-md-4">
+                                <small class="text-light-gray d-block">Configuration:</small>
+                                <strong class="text-white">{{ query.config_used.name }}</strong>
+                            </div>
+                            {% endif %}
+                            {% if query.user_ip %}
+                            <div class="col-md-4">
+                                <small class="text-light-gray d-block">IP:</small>
+                                <strong class="text-white">{{ query.user_ip }}</strong>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Paginacja -->
+        {% if queries.has_other_pages %}
+        <nav aria-label="Paginacja historii zapytań">
+            <ul class="pagination justify-content-center">
+                {% if queries.has_previous %}
+                <li class="page-item">
+                    <a class="page-link bg-dark-card border-dark text-white" 
+                       href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}">
+                        <i class="fas fa-angle-double-left"></i>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link bg-dark-card border-dark text-white" 
+                       href="?page={{ queries.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">
+                        <i class="fas fa-angle-left"></i>
+                    </a>
+                </li>
+                {% endif %}
+
+                {% for num in queries.paginator.page_range %}
+                {% if queries.number == num %}
+                <li class="page-item active">
+                    <span class="page-link bg-purple border-purple">{{ num }}</span>
+                </li>
+                {% elif num > queries.number|add:'-3' and num < queries.number|add:'3' %}
+                <li class="page-item">
+                    <a class="page-link bg-dark-card border-dark text-white" 
+                       href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}">
+                        {{ num }}
+                    </a>
+                </li>
+                {% endif %}
+                {% endfor %}
+
+                {% if queries.has_next %}
+                <li class="page-item">
+                    <a class="page-link bg-dark-card border-dark text-white" 
+                       href="?page={{ queries.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">
+                        <i class="fas fa-angle-right"></i>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link bg-dark-card border-dark text-white" 
+                       href="?page={{ queries.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}">
+                        <i class="fas fa-angle-double-right"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+
+        {% else %}
+        <!-- Stan pusty -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body text-center py-5">
+                        <div class="text-purple mb-4">
+                            <i class="fas fa-history" style="font-size: 4rem; opacity: 0.3;"></i>
+                        </div>
+                        {% if search_query %}
+                        <h4 class="text-white mb-3">Brak wyników</h4>
+                        <p class="text-light-gray mb-4">
+                            No queries found containing "<strong>{{ search_query }}</strong>".
+                            Try different keywords.
+                        </p>
+                        <a href="{% url 'query_history' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-times me-2"></i>
+                            Clear search
+                        </a>
+                        {% else %}
+                        <h4 class="text-white mb-3">No History</h4>
+                        <p class="text-light-gray mb-4">
+                            There are no queries in history yet. 
+                            Ask your first question to start using the system.
+                        </p>
+                        <a href="{% url 'index' %}" class="btn btn-primary glow-purple">
+                            <i class="fas fa-question-circle me-2"></i>
+                            Ask first question
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    // Kopiowanie do schowka
+    $('.copy-query-btn, .copy-response-btn').on('click', function(e) {
+        e.preventDefault();
+        
+        const text = $(this).data('query') || $(this).data('response');
+        
+        navigator.clipboard.writeText(text).then(function() {
+            showAlert('Skopiowano do schowka!', 'success');
+        }).catch(function() {
+            showAlert('Błąd podczas kopiowania.', 'danger');
+        });
+    });
+    
+    // Reuse query
+    $('.reuse-query-btn').on('click', function(e) {
+        const query = $(this).data('query');
+        localStorage.setItem('reuse_query', query);
+    });
+    
+    // If there's a query to reuse, set it on the main page
+    if (window.location.pathname === '/' && localStorage.getItem('reuse_query')) {
+        const query = localStorage.getItem('reuse_query');
+        $('#id_query').val(query);
+        localStorage.removeItem('reuse_query');
+        
+        showAlert('Question has been loaded from history.', 'info');
+    }
+});
+
+function showAlert(message, type = 'info') {
+    const alertClass = `alert-${type}`;
+    const iconClass = {
+        'success': 'fas fa-check-circle',
+        'warning': 'fas fa-exclamation-triangle',
+        'danger': 'fas fa-exclamation-circle',
+        'info': 'fas fa-info-circle'
+    }[type] || 'fas fa-info-circle';
+    
+    const alertHtml = `
+        <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
+            <i class="${iconClass} me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+    
+    $('.main-content .container').prepend(alertHtml);
+    
+    setTimeout(function() {
+        $('.alert').first().fadeOut('slow', function() {
+            $(this).remove();
+        });
+    }, 5000);
+}
+</script>
+{% endblock %}

@@ -1,0 +1,257 @@
+{% extends 'research_rag/base.html' %}
+{% load static %}
+
+{% block title %}Home - RAG Research Assistant{% endblock %}
+
+{% block page_icon %}<i class="fas fa-home"></i>{% endblock %}
+{% block page_title %}Welcome to RAG Research Assistant{% endblock %}
+{% block page_subtitle %}Ask scientific questions and get answers based on the latest publications{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Główny formularz zapytania -->
+    <div class="col-lg-8">
+        <div class="card shadow-purple">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-question-circle me-2"></i>
+                    Ask a scientific question
+                </h5>
+            </div>
+            <div class="card-body">
+                <form id="query-form" method="post" action="{% url 'ask_question' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        {{ query_form.query.label_tag }}
+                        {{ query_form.query }}
+                        <div class="form-text">
+                            {{ query_form.query.help_text }}
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-search me-2"></i>Ask Question
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- Przykładowe pytania -->
+                <div class="mt-4">
+                    <h6 class="text-muted mb-3">Example questions:</h6>
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <button class="btn btn-outline-primary btn-sm w-100 example-question" 
+                                    data-question="What are the latest developments in quantum computing?">
+                                <i class="fas fa-atom me-1"></i>Quantum Computing
+                            </button>
+                        </div>
+                        <div class="col-md-6">
+                            <button class="btn btn-outline-primary btn-sm w-100 example-question" 
+                                    data-question="How does machine learning improve medical diagnostics?">
+                                <i class="fas fa-brain me-1"></i>AI in Medicine
+                            </button>
+                        </div>
+                        <div class="col-md-6">
+                            <button class="btn btn-outline-primary btn-sm w-100 example-question" 
+                                    data-question="What are the environmental impacts of renewable energy?">
+                                <i class="fas fa-leaf me-1"></i>Renewable Energy
+                            </button>
+                        </div>
+                        <div class="col-md-6">
+                            <button class="btn btn-outline-primary btn-sm w-100 example-question" 
+                                    data-question="Recent advances in CRISPR gene editing technology">
+                                <i class="fas fa-dna me-1"></i>CRISPR
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Response area -->
+        <div id="response-container" class="mt-4">
+            <!-- Responses will be loaded here via AJAX -->
+        </div>
+        
+        <!-- System Information -->
+        <div class="card mt-4">
+            <div class="card-body text-center">
+                <h6 class="text-purple mb-3">
+                    <i class="fas fa-info-circle me-2"></i>
+                    About System
+                </h6>
+                <p class="small text-light-gray mb-3">
+                    RAG Research Assistant uses the latest AI models to analyze scientific publications 
+                    and generate responses based on current research.
+                </p>
+                <div class="row text-center">
+                    <div class="col-4">
+                        <div class="text-purple fw-600">AI</div>
+                        <small class="text-light-gray">Models</small>
+                    </div>
+                    <div class="col-4">
+                        <div class="text-purple fw-600">RAG</div>
+                        <small class="text-light-gray">Architecture</small>
+                    </div>
+                    <div class="col-4">
+                        <div class="text-purple fw-600">ArXiv</div>
+                        <small class="text-light-gray">Sources</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Side panel -->
+    <div class="col-lg-4">
+        <!-- Active configuration status -->
+        {% if active_config %}
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h6 class="mb-0">
+                    <i class="fas fa-cog me-2"></i>
+                    Active Configuration
+                </h6>
+            </div>
+            <div class="card-body">
+                <h6 class="text-success">{{ active_config.name }}</h6>
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="bg-dark-card rounded p-2 border border-dark">
+                            <small class="text-light-gray d-block">Model</small>
+                            <strong class="text-white">{{ active_config.model_name }}</strong>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="bg-dark-card rounded p-2 border border-dark">
+                            <small class="text-light-gray d-block">Chunks</small>
+                            <strong class="text-white">{{ active_config.k_chunks }}</strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-3">
+                    <div class="row">
+                        <div class="col-6">
+                            <small class="text-light-gray">Temperature:</small>
+                            <strong class="d-block text-white">{{ active_config.temperature }}</strong>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-light-gray">Max tokens:</small>
+                            <strong class="d-block text-white">{{ active_config.max_tokens }}</strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-3">
+                    <a href="{% url 'configurations' %}" class="btn btn-outline-primary btn-sm w-100">
+                        <i class="fas fa-cogs me-1"></i>Manage Configurations
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="card mb-4">
+            <div class="card-header bg-warning text-dark">
+                <h6 class="mb-0">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    No Active Configuration
+                </h6>
+            </div>
+            <div class="card-body">
+                <p class="mb-3 text-white">You must create and activate a configuration before asking questions.</p>
+                <a href="{% url 'configuration_create' %}" class="btn btn-warning w-100">
+                    <i class="fas fa-plus me-1"></i>Create Configuration
+                </a>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Recent queries -->
+        {% if recent_queries %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">
+                        <i class="fas fa-history me-2"></i>
+                        Recent Queries
+                    </h6>
+                    <a href="{% url 'query_history' %}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-list me-1"></i>All
+                    </a>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    {% for query in recent_queries %}
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1 text-white">{{ query.query_text|truncatechars:60 }}</h6>
+                                <small class="text-light-gray">
+                                    <i class="fas fa-clock me-1"></i>
+                                    {{ query.created_at|timesince }} ago
+                                </small>
+                            </div>
+                            {% if query.processing_time %}
+                            <span class="badge badge-purple">{{ query.processing_time|floatformat:2 }}s</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Quick actions -->
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="fas fa-bolt me-2"></i>
+                    Quick Actions
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'database_management' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-database me-2"></i>
+                        Prepare Database
+                    </a>
+                    <a href="{% url 'configurations' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-cogs me-2"></i>
+                        RAG Configurations
+                    </a>
+                    <a href="{% url 'query_history' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-history me-2"></i>
+                        Query History
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    // Handle example questions
+    $('.example-question').on('click', function() {
+        const question = $(this).data('question');
+        $('#id_query').val(question);
+        $('#id_query').focus();
+        
+        // Auto-resize textarea
+        const textarea = document.getElementById('id_query');
+        textarea.style.height = 'auto';
+        textarea.style.height = (textarea.scrollHeight) + 'px';
+    });
+    
+    // Auto-focus on textarea when page loads
+    $('#id_query').focus();
+});
+</script>
+{% endblock %}

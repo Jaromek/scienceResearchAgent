@@ -42,6 +42,7 @@ def prepare_database_if_needed(query: str):
             max_results=100,  # Smaller number for faster tests
             download_directory='archive'
         )
+        
         db_preparation.prepare_database()
         print("Database prepared successfully!")
         return True
