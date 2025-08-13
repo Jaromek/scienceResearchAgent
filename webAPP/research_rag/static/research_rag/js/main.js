@@ -1,40 +1,40 @@
 /**
  * RAG Research Assistant - Main JavaScript
- * Obsługuje interaktywność aplikacji, AJAX requests i animacje
+ * Handles application interactivity, AJAX requests and animations
  */
 
 $(document).ready(function() {
-    // Inicjalizacja aplikacji
+    // Initialize application
     initializeApp();
     
     // Event listeners
     setupEventListeners();
     
-    // Animacje przy ładowaniu
+    // Loading animations
     setupAnimations();
 });
 
 /**
- * Inicjalizacja głównych funkcji aplikacji
+ * Initialize main application functions
  */
 function initializeApp() {
-    // Ukryj loading overlay jeśli istnieje
+    // Hide loading overlay if exists
     hideLoadingOverlay();
     
-    // Inicjalizuj tooltips Bootstrap
+    // Initialize Bootstrap tooltips
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
     
-    // Auto-hide alerts po 5 sekundach
+    // Auto-hide alerts after 5 seconds
     setTimeout(function() {
         $('.alert').fadeOut('slow');
     }, 5000);
 }
 
 /**
- * Konfiguracja event listenerów
+ * Configure event listeners
  */
 function setupEventListeners() {
     // Query form AJAX
@@ -52,18 +52,18 @@ function setupEventListeners() {
     // Auto-resize textarea
     $('textarea').on('input', autoResizeTextarea);
     
-    // Smooth scroll dla linków
+    // Smooth scroll for links
     $('a[href^="#"]').on('click', handleSmoothScroll);
 }
 
 /**
- * Konfiguracja animacji
+ * Configure animations
  */
 function setupAnimations() {
-    // Fade in dla kart
+    // Fade in for cards
     $('.card').addClass('fade-in-up');
     
-    // Staggered animation dla elementów listy
+    // Staggered animation for list elements
     $('.list-group-item, .table tbody tr').each(function(index) {
         $(this).css('animation-delay', (index * 0.1) + 's');
         $(this).addClass('fade-in-up');
@@ -71,7 +71,7 @@ function setupAnimations() {
 }
 
 /**
- * Obsługa wysyłania zapytania przez AJAX
+ * Handle query submission via AJAX
  */
 function handleQuerySubmission(e) {
     e.preventDefault();
@@ -108,24 +108,24 @@ function handleQuerySubmission(e) {
                 form[0].reset();
                 updateRecentQueries();
             } else {
-                showAlert('Błąd: ' + (data.error || 'Nieznany błąd'), 'danger');
+                showAlert('Error: ' + (data.error || 'Unknown error'), 'danger');
             }
         },
         error: function(xhr, status, error) {
             hideQueryLoading(submitBtn);
-            showAlert('Błąd połączenia: ' + error, 'danger');
+            showAlert('Connection error: ' + error, 'danger');
         }
     });
 }
 
 /**
- * Pokazuje loading state dla formularza zapytania
+ * Show loading state for query form
  */
 function showQueryLoading(submitBtn) {
     submitBtn.prop('disabled', true);
-    submitBtn.html('<i class="fas fa-spinner fa-spin me-2"></i>Analizuję...');
+    submitBtn.html('<i class="fas fa-spinner fa-spin me-2"></i>Analyzing...');
     
-    // Pokaż progress bar
+    // Show progress bar
     const progressHtml = `
         <div id="query-progress" class="mt-3">
             <div class="card">
@@ -161,7 +161,7 @@ function showQueryResponse(data, container) {
         <div class="query-response fade-in-up">
             <div class="d-flex justify-content-between align-items-start mb-3">
                 <h4 class="text-purple mb-0">
-                    <i class="fas fa-robot me-2"></i>Odpowiedź AI
+                    <i class="fas fa-robot me-2"></i>AI Answer
                 </h4>
                 <span class="badge badge-purple">
                     <i class="fas fa-clock me-1"></i>${processingTime}s
@@ -174,11 +174,11 @@ function showQueryResponse(data, container) {
                 <div class="row">
                     <div class="col-sm-6">
                         <i class="fas fa-calendar me-1"></i>
-                        ${new Date().toLocaleString('pl-PL')}
+                        ${new Date().toLocaleString('en-US')}
                     </div>
                     <div class="col-sm-6 text-sm-end">
                         <i class="fas fa-database me-1"></i>
-                        Czas przetwarzania: ${processingTime}s
+                        Processing time: ${processingTime}s
                     </div>
                 </div>
             </div>
@@ -187,19 +187,19 @@ function showQueryResponse(data, container) {
     
     container.html(responseHtml);
     
-    // Smooth scroll do odpowiedzi
+    // Smooth scroll to response
     $('html, body').animate({
         scrollTop: container.offset().top - 100
     }, 500);
 }
 
 /**
- * Formatuje tekst odpowiedzi (markdown-like)
+ * Format response text (markdown-like)
  */
 function formatResponseText(text) {
     if (!text) return '';
     
-    // Podstawowe formatowanie
+    // Basic formatting
     return text
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
         .replace(/\*(.*?)\*/g, '<em>$1</em>')
@@ -208,7 +208,7 @@ function formatResponseText(text) {
 }
 
 /**
- * Obsługa testowania modelu
+ * Handle model testing
  */
 function handleModelTest(e) {
     e.preventDefault();
@@ -219,13 +219,13 @@ function handleModelTest(e) {
     const ollamaUrl = $('#id_ollama_url').val();
     
     if (!modelName || !ollamaUrl) {
-        showAlert('Proszę wprowadzić nazwę modelu i URL Ollama.', 'warning');
+        showAlert('Please enter model name and Ollama URL.', 'warning');
         return;
     }
     
     // Loading state
     btn.prop('disabled', true);
-    btn.html('<i class="fas fa-spinner fa-spin me-2"></i>Testuję...');
+    btn.html('<i class="fas fa-spinner fa-spin me-2"></i>Testing...');
     
     $.ajax({
         url: '/api/test-model/',
@@ -248,7 +248,7 @@ function handleModelTest(e) {
         error: function() {
             btn.prop('disabled', false);
             btn.html(originalText);
-            showAlert('Błąd podczas testowania modelu.', 'danger');
+            showAlert('Error during model testing.', 'danger');
         }
     });
 }
@@ -263,13 +263,13 @@ function handleConfigActivation(e) {
     const configId = btn.data('config-id');
     const configName = btn.data('config-name');
     
-    if (!confirm(`Czy na pewno chcesz aktywować konfigurację "${configName}"?`)) {
+    if (!confirm(`Are you sure you want to activate configuration "${configName}"?`)) {
         return;
     }
     
     const originalText = btn.html();
     btn.prop('disabled', true);
-    btn.html('<i class="fas fa-spinner fa-spin me-2"></i>Aktywuję...');
+    btn.html('<i class="fas fa-spinner fa-spin me-2"></i>Activating...');
     
     $.ajax({
         url: `/config/${configId}/activate/`,
@@ -277,7 +277,7 @@ function handleConfigActivation(e) {
         success: function(data) {
             if (data.success) {
                 showAlert(data.message, 'success');
-                // Odśwież stronę po 1 sekundzie
+                // Refresh page after 1 second
                 setTimeout(() => location.reload(), 1000);
             } else {
                 showAlert(data.message, 'danger');
@@ -294,7 +294,7 @@ function handleConfigActivation(e) {
 }
 
 /**
- * Obsługa przygotowania bazy danych
+ * Handle database preparation
  */
 function handleDatabasePreparation(e) {
     const submitBtn = $(this).find('button[type="submit"]');
@@ -302,21 +302,21 @@ function handleDatabasePreparation(e) {
     
     if (!searchTopic) {
         e.preventDefault();
-        showAlert('Proszę wprowadzić temat wyszukiwania.', 'warning');
+        showAlert('Please enter a search topic.', 'warning');
         return;
     }
     
-    // Pokaż warning o czasie trwania
-    if (!confirm('Przygotowanie bazy danych może zająć kilka minut. Czy kontynuować?')) {
+    // Show warning about duration
+    if (!confirm('Database preparation may take several minutes. Continue?')) {
         e.preventDefault();
         return;
     }
     
     // Loading state
     submitBtn.prop('disabled', true);
-    submitBtn.html('<i class="fas fa-spinner fa-spin me-2"></i>Przygotowuję bazę...');
+    submitBtn.html('<i class="fas fa-spinner fa-spin me-2"></i>Preparing database...');
     
-    // Form zostanie wysłany normalnie (nie AJAX)
+    // Form will be submitted normally (not AJAX)
 }
 
 /**
@@ -328,7 +328,7 @@ function autoResizeTextarea() {
 }
 
 /**
- * Smooth scroll dla linków
+ * Smooth scroll for links
  */
 function handleSmoothScroll(e) {
     const target = $(this.getAttribute('href'));
@@ -341,15 +341,15 @@ function handleSmoothScroll(e) {
 }
 
 /**
- * Aktualizuje listę ostatnich zapytań
+ * Update recent queries list
  */
 function updateRecentQueries() {
-    // Można zaimplementować AJAX do odświeżenia listy
-    // Na razie pozostawiamy puste
+    // Can implement AJAX to refresh list
+    // For now leave empty
 }
 
 /**
- * Pokazuje alert
+ * Show alert
  */
 function showAlert(message, type = 'info') {
     const alertClass = `alert-${type}`;
@@ -368,10 +368,10 @@ function showAlert(message, type = 'info') {
         </div>
     `;
     
-    // Dodaj alert na górę strony
+    // Add alert to top of page
     $('.main-content .container').prepend(alertHtml);
     
-    // Auto-hide po 5 sekundach
+    // Auto-hide after 5 seconds
     setTimeout(function() {
         $('.alert').first().fadeOut('slow', function() {
             $(this).remove();
@@ -380,14 +380,14 @@ function showAlert(message, type = 'info') {
 }
 
 /**
- * Pokazuje loading overlay
+ * Show loading overlay
  */
-function showLoadingOverlay(message = 'Ładowanie...') {
+function showLoadingOverlay(message = 'Loading...') {
     const overlayHtml = `
         <div class="loading-overlay">
             <div class="loading-content">
                 <div class="spinner-border spinner-border-purple mb-3" role="status">
-                    <span class="visually-hidden">Ładowanie...</span>
+                    <span class="visually-hidden">Loading...</span>
                 </div>
                 <h5>${message}</h5>
             </div>
@@ -397,7 +397,7 @@ function showLoadingOverlay(message = 'Ładowanie...') {
 }
 
 /**
- * Ukrywa loading overlay
+ * Hide loading overlay
  */
 function hideLoadingOverlay() {
     $('.loading-overlay').fadeOut('fast', function() {
@@ -424,14 +424,14 @@ function debounce(func, wait, immediate) {
 }
 
 /**
- * Utility: Format liczb
+ * Utility: Format numbers
  */
 function formatNumber(num) {
-    return new Intl.NumberFormat('pl-PL').format(num);
+    return new Intl.NumberFormat('en-US').format(num);
 }
 
 /**
- * Utility: Format czasu
+ * Utility: Format time
  */
 function formatDuration(seconds) {
     if (seconds < 60) {

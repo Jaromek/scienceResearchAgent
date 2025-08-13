@@ -1372,3 +1372,15 @@ p, span, div, h1, h2, h3, h4, h5, h6 {
     border-color: var(--primary-purple) !important;
     color: var(--white) !important;
 }
+
+/* Recent Queries section button styling */
+.card-header .btn-outline-primary {
+    color: var(--white) !important;
+    border-color: var(--primary-purple);
+}
+
+.card-header .btn-outline-primary:hover {
+    background: var(--primary-purple) !important;
+    border-color: var(--primary-purple) !important;
+    color: var(--white) !important;
+}
